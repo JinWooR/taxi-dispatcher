@@ -41,7 +41,7 @@ public class Account {
         if (newCredential instanceof BasicCredential nbc) {
             duplicated = this.credentials.stream()
                     .anyMatch(c -> c instanceof  BasicCredential bc
-                            && bc.getLoginIdentifier().getIdentifierKind() == nbc.getLoginIdentifier().getIdentifierKind());
+                            && bc.getLoginIdentifier().identifierKind() == nbc.getLoginIdentifier().identifierKind());
         } else if (newCredential instanceof OAuthCredential noc) {
             duplicated = this.credentials.stream()
                     .anyMatch(c -> c instanceof OAuthCredential oc

@@ -11,7 +11,7 @@ import java.util.UUID;
 public class AccountId {
     UUID value;
 
-    public static AccountId of(UUID value) {
-        return new AccountId(value);
+    public static AccountId newId() {
+        return new AccountId(UUID.randomUUID());
     }
 }

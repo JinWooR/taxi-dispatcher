@@ -4,6 +4,7 @@ import com.taxidispatcher.modules.account.domain.model.AccountId;
 import com.taxidispatcher.modules.account.domain.model.AccountStatus;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,6 +23,10 @@ public class Account {
 
     public static Account of(AccountId accountId, AccountStatus status, List<Credential> credentials) {
         return new Account(accountId, status, credentials);
+    }
+
+    public static Account of(AccountId accountId, AccountStatus status) {
+        return new Account(accountId, status, new ArrayList<>());
     }
 
     // 읽기 전용

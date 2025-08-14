@@ -10,7 +10,7 @@ public class Version {
         this.value = value;
     }
 
-    public Version of(long value) {
+    public static Version of(long value) {
         return new Version(value);
     }
 }

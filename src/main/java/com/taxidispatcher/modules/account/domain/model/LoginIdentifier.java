@@ -1,38 +1,20 @@
 package com.taxidispatcher.modules.account.domain.model;
 
-import lombok.Value;
-
-@Value
-public class LoginIdentifier {
-    IdentifierKind identifierKind;
-    String loginId;
-    String hashPassword;
-
-    private LoginIdentifier(IdentifierKind identifierKind, String loginId, String hashPassword) {
-        this.identifierKind = identifierKind;
-        this.loginId = normalizeLoginId(identifierKind, loginId);
-        this.hashPassword = hashPassword;
-
-        validate();
-    }
-
-    public LoginIdentifier of(IdentifierKind identifierKind, String loginId, String hashPassword) {
-        return new LoginIdentifier(identifierKind, loginId, hashPassword);
-    }
-
-    private String normalizeLoginId(IdentifierKind identifierKind, String loginId) {
-        if (loginId == null) return null;
-
-        if (IdentifierKind.PHONE.equals(identifierKind)) {
-            loginId = loginId.replaceAll("-", "");
+public record LoginIdentifier(IdentifierKind identifierKind, String loginId) {
+    public static LoginIdentifier of(IdentifierKind identifierKind, String loginId) {
+        if (identifierKind == null || loginId == null || loginId.isBlank()) {
+            throw new IllegalArgumentException("Do not Empty!");
         }
 
-        return loginId.trim();
-    }
+        String normalizedLoginId = switch (identifierKind) {
+            case EMAIL, ID -> loginId.trim();
+            case PHONE -> loginId.replaceAll("-", "").trim();
+        };
 
-    private void validate() {
-        if (!this.identifierKind.validate(this.loginId)) {
-            throw new IllegalStateException("로그인 수단 유효성 검사 오류 : " + this.identifierKind + " / " + this.loginId);
+        if (!identifierKind.validate(normalizedLoginId)) {
+            throw new IllegalArgumentException("로그인 수단 유효성 검사 오류 : " + identifierKind + " / " + normalizedLoginId);
         }
+
+        return new LoginIdentifier(identifierKind, normalizedLoginId);
     }
 }

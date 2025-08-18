@@ -3,7 +3,6 @@ package com.taxidispatcher.modules.account.domain.aggregate;
 import com.taxidispatcher.modules.account.domain.model.AccountId;
 import com.taxidispatcher.modules.account.domain.model.HashPassword;
 import com.taxidispatcher.modules.account.domain.model.LoginIdentifier;
-import com.taxidispatcher.modules.account.domain.model.Version;
 import lombok.EqualsAndHashCode;
 
 import java.time.Instant;

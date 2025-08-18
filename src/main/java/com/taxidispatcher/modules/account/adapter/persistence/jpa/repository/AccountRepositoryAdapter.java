@@ -20,7 +20,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
@@ -49,14 +48,7 @@ public class AccountRepositoryAdapter implements AccountRepository {
             return Optional.empty();
         }
 
-        List<BasicCredentialJpaEntity> basicCredentialJpaEntities = basicCredentialJpaRepository.findAllByAccountJpaEntity(accountJpaEntity);
-        List<OAuthCredentialJpaEntity> oAuthCredentialJpaEntities = oAuthCredentialJpaRepository.findAllByAccountJpaEntity(accountJpaEntity);
-
-        List<CredentialJpaEntity> credentialJpaEntities = Stream.of(basicCredentialJpaEntities, oAuthCredentialJpaEntities)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-
-        Account account = accountMapper.toDomain(accountJpaEntity, credentialJpaEntities);
+        Account account = accountMapper.toDomain(accountJpaEntity, accountJpaEntity.getCredentials());
 
         return Optional.of(account);
     }
@@ -81,11 +73,6 @@ public class AccountRepositoryAdapter implements AccountRepository {
 
         // 기존 루트 엔티티 업데이트
         accountJpaEntity.setStatus(account.getStatus());
-
-        // 기존 루트 하위 Credential 엔티티 조회
-        Stream.of(basicCredentialJpaRepository.findAllByAccountJpaEntity(accountJpaEntity), oAuthCredentialJpaRepository.findAllByAccountJpaEntity(accountJpaEntity))
-                .flatMap(Collection::stream)
-                .forEach(accountJpaEntity::addCredential);
 
         // 기존 루트 하위 Credential 엔티티 병합
         mergeCredentials(accountJpaEntity, account);

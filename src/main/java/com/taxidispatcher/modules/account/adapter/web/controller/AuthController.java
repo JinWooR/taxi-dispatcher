@@ -1,7 +1,11 @@
 package com.taxidispatcher.modules.account.adapter.web.controller;
 
+import com.taxidispatcher.modules.account.adapter.web.dto.request.PasswordLoginRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.RegisterBasicRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.response.AccountIdResponse;
+import com.taxidispatcher.modules.account.adapter.web.dto.response.LoginResponse;
+import com.taxidispatcher.modules.account.application.port.in.AuthenticatePasswordCommand;
+import com.taxidispatcher.modules.account.application.port.in.AuthenticatePasswordUseCase;
 import com.taxidispatcher.modules.account.application.port.in.RegisterAccountBasicCommand;
 import com.taxidispatcher.modules.account.application.port.in.RegisterAccountBasicUseCase;
 import com.taxidispatcher.modules.account.domain.model.AccountId;
@@ -20,6 +24,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class AuthController {
     private final RegisterAccountBasicUseCase registerAccountBasicUseCase;
+    private final AuthenticatePasswordUseCase authenticatePasswordUseCase;
 
     @PostMapping("register")
     public ResponseEntity<AccountIdResponse> register(@Valid @RequestBody RegisterBasicRequest request) {
@@ -28,5 +33,13 @@ public class AuthController {
         return ResponseEntity
                 .created(URI.create("/accounts/" + accountId.value().toString()))
                 .body(new AccountIdResponse(accountId.value().toString()));
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody PasswordLoginRequest request) {
+        var token = authenticatePasswordUseCase.handle(new AuthenticatePasswordCommand(request.loginId(), request.password()));
+
+        return ResponseEntity
+                .ok(new LoginResponse(token));
     }
 }

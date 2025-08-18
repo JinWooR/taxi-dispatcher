@@ -2,6 +2,7 @@ package com.taxidispatcher.modules.account.domain.aggregate;
 
 import com.taxidispatcher.modules.account.domain.model.AccountId;
 import com.taxidispatcher.modules.account.domain.model.AccountStatus;
+import com.taxidispatcher.modules.account.domain.model.Version;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -13,20 +14,23 @@ public class Account {
     private final AccountId accountId;
     @Getter
     AccountStatus status;
+    @Getter
+    private final Version version;
     private final List<Credential> credentials;
 
-    private Account(AccountId accountId, AccountStatus status, List<Credential> credentials) {
+    private Account(AccountId accountId, AccountStatus status, Version version, List<Credential> credentials) {
         this.accountId = accountId;
         this.status = status;
+        this.version = version;
         this.credentials = credentials;
     }
 
-    public static Account of(AccountId accountId, AccountStatus status, List<Credential> credentials) {
-        return new Account(accountId, status, credentials);
+    public static Account of(AccountId accountId, AccountStatus status, Version version, List<Credential> credentials) {
+        return new Account(accountId, status, version, credentials);
     }
 
-    public static Account of(AccountId accountId, AccountStatus status) {
-        return new Account(accountId, status, new ArrayList<>());
+    public static Account of(AccountId accountId, AccountStatus status, Version version) {
+        return new Account(accountId, status, version, new ArrayList<>());
     }
 
     // 읽기 전용

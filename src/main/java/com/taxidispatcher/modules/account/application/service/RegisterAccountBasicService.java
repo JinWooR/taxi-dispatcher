@@ -7,17 +7,25 @@ import com.taxidispatcher.modules.account.application.port.out.PasswordHasher;
 import com.taxidispatcher.modules.account.domain.aggregate.Account;
 import com.taxidispatcher.modules.account.domain.aggregate.BasicCredential;
 import com.taxidispatcher.modules.account.domain.model.*;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.util.UUID;
 
+@Service
 @RequiredArgsConstructor
 public class RegisterAccountBasicService implements RegisterAccountBasicUseCase {
     private final AccountRepository accountRepository;
     private final PasswordHasher passwordHasher;
-    private final Clock clock;
+    private Clock clock;
+
+    @PostConstruct
+    public void init() {
+        this.clock = Clock.systemUTC();
+    }
 
     @Override
     public AccountId handle(RegisterAccountBasicCommand registerAccountBasicCommand) {
@@ -45,7 +53,8 @@ public class RegisterAccountBasicService implements RegisterAccountBasicUseCase 
 
         Account newAccount = Account.of( // 어카운트 생성
                 newId,
-                AccountStatus.ACTIVE
+                AccountStatus.ACTIVE,
+                Version.of(0l)
         );
         newAccount.addCredential(basicCredential); // 어카운트 인증 수단 추가
 

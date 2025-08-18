@@ -1,4 +1,4 @@
-package com.taxidispatcher.apps;
+package com.taxidispatcher;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

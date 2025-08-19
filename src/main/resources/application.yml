@@ -29,3 +29,10 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace  # Hibernate 6 바인드 파라미터 로깅
     org.springframework.data.repository.config: debug
+
+kakao:
+  rest-api: ''
+
+naver:
+  client-id: ''
+  client-secret: ''

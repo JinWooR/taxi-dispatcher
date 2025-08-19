@@ -1,4 +1,4 @@
-package com.taxidispatcher.modules.user.domain.model.value;
+package com.taxidispatcher.modules.user.domain.model;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;

@@ -1,4 +1,4 @@
-package com.taxidispatcher.modules.user.domain.model.value;
+package com.taxidispatcher.modules.user.domain.model;
 
 import lombok.Value;
 
@@ -18,5 +18,9 @@ public class UserId {
 
     public UUID value() {
         return value;
+    }
+
+    public static UserId newId() {
+        return new UserId(UUID.randomUUID());
     }
 }

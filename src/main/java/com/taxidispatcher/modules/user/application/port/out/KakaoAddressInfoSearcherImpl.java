@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -17,6 +18,7 @@ import java.util.Optional;
  */
 @Service
 @Qualifier("kakao")
+@Primary
 public class KakaoAddressInfoSearcherImpl implements AddressInfoSearcher {
     private final String API_KEY;
     private final String API_BASE_URL = "https://dapi.kakao.com";

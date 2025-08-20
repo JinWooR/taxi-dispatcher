@@ -30,6 +30,14 @@ logging:
     org.hibernate.orm.jdbc.bind: trace  # Hibernate 6 바인드 파라미터 로깅
     org.springframework.data.repository.config: debug
 
+endPoints:
+  user-bc:
+    base-url: http://localhost:8080
+    internal-user: /internal/users/account/{id}
+  driver-bc:
+    base-url: http://localhost:8080
+    internal-driver: /internal/drivers/account/{id}
+
 kakao:
   rest-api: ''
 

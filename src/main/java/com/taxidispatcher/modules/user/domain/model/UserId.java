@@ -16,6 +16,10 @@ public class UserId {
         return new UserId(value);
     }
 
+    public static UserId of(String id) {
+        return new UserId(UUID.fromString(id));
+    }
+
     public UUID value() {
         return value;
     }

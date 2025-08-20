@@ -1,10 +1,12 @@
 package com.taxidispatcher.modules.account.application.service;
 
+import com.taxidispatcher.modules.account.adapter.client.dto.ActorDTO;
 import com.taxidispatcher.modules.account.application.port.in.AuthenticatePasswordCommand;
 import com.taxidispatcher.modules.account.application.port.in.AuthenticatePasswordUseCase;
 import com.taxidispatcher.modules.account.application.port.out.AccountRepository;
 import com.taxidispatcher.modules.account.application.port.out.JwtTokenIssuer;
 import com.taxidispatcher.modules.account.application.port.out.PasswordHasher;
+import com.taxidispatcher.modules.account.application.port.out.RoleCheckerClient;
 import com.taxidispatcher.modules.account.domain.aggregate.Account;
 import com.taxidispatcher.modules.account.domain.aggregate.BasicCredential;
 import com.taxidispatcher.modules.account.domain.model.IdentifierKind;
@@ -18,6 +20,8 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ public class AuthenticatePasswordService implements AuthenticatePasswordUseCase 
     private final AccountRepository accountRepository;
     private final PasswordHasher passwordHasher;
     private final JwtTokenIssuer jwtTokenIssuer;
+    private final RoleCheckerClient roleCheckerClient;
     private Clock clock;
 
     @PostConstruct
@@ -33,8 +38,8 @@ public class AuthenticatePasswordService implements AuthenticatePasswordUseCase 
     }
 
     @Override
-    public String handle(AuthenticatePasswordCommand authenticatePasswordCommand) {
-        LoginIdentifier loginIdentifier = LoginIdentifier.of(IdentifierKind.ID, authenticatePasswordCommand.loginId());
+    public String handle(AuthenticatePasswordCommand command) {
+        LoginIdentifier loginIdentifier = LoginIdentifier.of(IdentifierKind.ID, command.loginId());
         
         // 어카운트 조회
         Account account = accountRepository.findByIdentifier(loginIdentifier)
@@ -52,13 +57,32 @@ public class AuthenticatePasswordService implements AuthenticatePasswordUseCase 
                 .orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호가 잘못 입력되었습니다."));
 
         // 비밀번호 검사
-        if (!passwordHasher.matches(basicCredential.getHashPassword().hashPassword(), authenticatePasswordCommand.rawPassword())) {
+        if (!passwordHasher.matches(basicCredential.getHashPassword().hashPassword(), command.rawPassword())) {
             throw new IllegalArgumentException("아이디 또는 비밀번호가 잘못 입력되었습니다.");
         }
 
         // 최근 사용 시간 최신화
         basicCredential.recentLastUse();
         accountRepository.save(account);
+
+        ActorDTO actor = null;
+        Set<String> authorities = new HashSet<>();
+        switch (command.actor()) {
+            case "USER" -> { // 사용자 권한 보유 검증
+                // TODO. USER 내부 API 구현 필요
+//                actor = roleCheckerClient.callUser(account.getAccountId());
+                authorities.add("ROLE_USER");
+            }
+            case "DRIVER" -> { // 기사 권한 보유 검증
+                // TODO. DRIVER 내부 API 구현 필요
+//                actor = roleCheckerClient.callDriver(account.getAccountId());
+                authorities.add("ROLE_DRIVER");
+            }
+            default -> {
+                // 에러
+                throw new IllegalArgumentException("");
+            }
+        }
 
         // 토큰 발급
         Instant now = Instant.now(clock),
@@ -71,6 +95,8 @@ public class AuthenticatePasswordService implements AuthenticatePasswordUseCase 
                         .subject(account.getAccountId().value().toString())
                         .add("login_identifier_kind", basicCredential.getLoginIdentifier().identifierKind())
                         .add("credential_id", basicCredential.getId())
+                        .add("actor", actor)
+                        .add("roles", authorities)
                         .build()
         );
 

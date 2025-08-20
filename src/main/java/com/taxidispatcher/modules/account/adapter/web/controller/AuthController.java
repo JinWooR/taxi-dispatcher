@@ -37,7 +37,23 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody PasswordLoginRequest request) {
-        var token = authenticatePasswordUseCase.handle(new AuthenticatePasswordCommand(request.loginId(), request.password()));
+        var token = authenticatePasswordUseCase.handle(new AuthenticatePasswordCommand(request.loginId(), request.password(), null));
+
+        return ResponseEntity
+                .ok(new LoginResponse(token));
+    }
+
+    @PostMapping("login/user")
+    public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody PasswordLoginRequest request) {
+        var token = authenticatePasswordUseCase.handle(new AuthenticatePasswordCommand(request.loginId(), request.password(), "USER"));
+
+        return ResponseEntity
+                .ok(new LoginResponse(token));
+    }
+
+    @PostMapping("login/driver")
+    public ResponseEntity<LoginResponse> loginDriver(@Valid @RequestBody PasswordLoginRequest request) {
+        var token = authenticatePasswordUseCase.handle(new AuthenticatePasswordCommand(request.loginId(), request.password(), "DRIVER"));
 
         return ResponseEntity
                 .ok(new LoginResponse(token));

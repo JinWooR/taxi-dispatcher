@@ -7,6 +7,7 @@ package com.taxidispatcher.modules.account.application.port.in;
  */
 public record AuthenticatePasswordCommand(
         String loginId,
-        String rawPassword
+        String rawPassword,
+        String actor // "USER" | "DRIVER"
 ) {
 }

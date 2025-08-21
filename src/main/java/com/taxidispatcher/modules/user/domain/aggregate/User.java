@@ -34,4 +34,16 @@ public class User {
     public static User of(UserId userId, UUID accountId, UserStatus status, String name, City city, Address address) {
         return new User(userId, accountId, status, name, city, address);
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateAddress(Address address) {
+        this.address = address;
+    }
+
+    public void updateCity(City city) {
+        this.city = city;
+    }
 }

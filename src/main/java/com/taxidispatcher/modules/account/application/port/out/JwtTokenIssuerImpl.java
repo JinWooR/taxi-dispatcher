@@ -2,8 +2,12 @@ package com.taxidispatcher.modules.account.application.port.out;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Date;
@@ -11,6 +15,11 @@ import java.util.Date;
 @Component
 public class JwtTokenIssuerImpl implements JwtTokenIssuer {
     private final Clock clock = Clock.systemUTC();
+    private final SecretKey key;
+
+    public JwtTokenIssuerImpl(@Value("${security.jwt.secret}") String secretKey) {
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+    }
 
     @Override
     public String issue(Claims claims) {
@@ -18,6 +27,7 @@ public class JwtTokenIssuerImpl implements JwtTokenIssuer {
 
         return Jwts.builder()
                 .claims(claims)
+                .signWith(key, Jwts.SIG.HS256)
                 .compact();
     }
 

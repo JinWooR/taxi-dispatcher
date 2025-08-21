@@ -25,9 +25,13 @@ public class UserController {
     private final RegisterUserUseCase registerUserUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("register")
-    public ResponseEntity<UserIdResponse> register(@Valid @RequestBody RegisterUserRequest request) {
-        UserId userId = registerUserUseCase.handle(new RegisterUserCommand(null, request.name(), request.address(), request.addressDetail()));
+    public ResponseEntity<UserIdResponse> register(
+            @AuthenticationPrincipal AccountPrincipal principal,
+            @Valid @RequestBody RegisterUserRequest request
+    ) {
+        UserId userId = registerUserUseCase.handle(new RegisterUserCommand(principal.accountId(), request.name(), request.address(), request.addressDetail()));
 
         return ResponseEntity
                 .created(URI.create("/users/" + userId.value().toString()))

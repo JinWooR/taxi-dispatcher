@@ -37,7 +37,7 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody PasswordLoginRequest request) {
-        var token = authenticatePasswordUseCase.handle(new AuthenticatePasswordCommand(request.loginId(), request.password(), null));
+        var token = authenticatePasswordUseCase.handle(new AuthenticatePasswordCommand(request.loginId(), request.password(), ""));
 
         return ResponseEntity
                 .ok(new LoginResponse(token));

@@ -70,17 +70,13 @@ public class AuthenticatePasswordService implements AuthenticatePasswordUseCase 
         switch (command.actor()) {
             case "USER" -> { // 사용자 권한 보유 검증
                 // TODO. USER 내부 API 구현 필요
-//                actor = roleCheckerClient.callUser(account.getAccountId());
+                actor = roleCheckerClient.callUser(account.getAccountId());
                 authorities.add("ROLE_USER");
             }
             case "DRIVER" -> { // 기사 권한 보유 검증
                 // TODO. DRIVER 내부 API 구현 필요
 //                actor = roleCheckerClient.callDriver(account.getAccountId());
                 authorities.add("ROLE_DRIVER");
-            }
-            default -> {
-                // 에러
-                throw new IllegalArgumentException("");
             }
         }
 

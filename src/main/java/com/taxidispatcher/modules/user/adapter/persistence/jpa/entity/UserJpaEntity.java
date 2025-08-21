@@ -75,4 +75,14 @@ public class UserJpaEntity {
         this.address = address;
         this.addressDetail = addressDetail;
     }
+
+    @PrePersist
+    void prePersist() {
+        this.createdAt = Instant.now();
+    }
+
+    @PreUpdate
+    void preUpdate() {
+        this.updateAt = Instant.now();
+    }
 }

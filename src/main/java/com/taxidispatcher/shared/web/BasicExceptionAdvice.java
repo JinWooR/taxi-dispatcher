@@ -4,6 +4,7 @@ import com.taxidispatcher.shared.core.ApiError;
 import com.taxidispatcher.shared.core.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -45,15 +46,14 @@ public class BasicExceptionAdvice {
                 .body(apiError(ErrorCode.UNAUTHORIZED, "인증 실패"));
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    protected ResponseEntity<ApiError> accessDenied(AccessDeniedException e) {
+    @ExceptionHandler({AuthorizationDeniedException.class, AccessDeniedException.class})
+    protected ResponseEntity<ApiError> accessDenied(Exception e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(apiError(ErrorCode.FORBIDDEN, "접근 권한이 없습니다."));
     }
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ApiError> internal(Exception e) {
-        e.printStackTrace();
         return ResponseEntity.internalServerError()
                 .body(apiError(ErrorCode.INTERNAL, "서버 에러가 발생했습니다."));
     }

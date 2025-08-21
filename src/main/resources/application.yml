@@ -29,6 +29,7 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace  # Hibernate 6 바인드 파라미터 로깅
     org.springframework.data.repository.config: debug
+    org.springframework.security: debug
 
 endPoints:
   user-bc:
@@ -37,6 +38,11 @@ endPoints:
   driver-bc:
     base-url: http://localhost:8080
     internal-driver: /internal/drivers/account/{id}
+
+security:
+  jwt:
+    issuer: "http://localhost:8080"
+    secret: zsR8#1f000uRN2a-t6j0Zn!1Z0_c2FkQND!A3vvVCtmXKd-EJB3FoQsXfQfXnstIt9o1Yg
 
 kakao:
   rest-api: ''

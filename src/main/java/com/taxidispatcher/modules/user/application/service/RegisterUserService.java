@@ -21,6 +21,10 @@ public class RegisterUserService implements RegisterUserUseCase {
 
     @Override
     public UserId handle(RegisterUserCommand command) {
+        if (userRepository.findByAccountId(command.accountId()).isPresent()) {
+            throw new IllegalArgumentException("해당 어카운트는 이미 등록된 사용자가 존재합니다.");
+        }
+
         AddressInfoSearcher.AddressInfo addressInfo = addressInfoSearcher.search(command.address());
 
         UserId newId = UserId.newId();

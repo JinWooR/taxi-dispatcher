@@ -1,9 +1,11 @@
 package com.taxidispatcher.modules.driver.domain.aggregate;
 
 import com.taxidispatcher.modules.driver.domain.model.WorkGeoId;
+import lombok.Getter;
 
 import java.time.Instant;
 
+@Getter
 public class DriverWorkGeo {
     private final WorkGeoId id;
     private final String lat; // 위도

@@ -5,10 +5,9 @@ import lombok.Getter;
 
 import java.util.UUID;
 
+@Getter
 public class Driver {
-    @Getter
     private final DriverId id;
-    @Getter
     private final UUID accountId;
     private DriverStatus status;
     private String name; // 기사 이름

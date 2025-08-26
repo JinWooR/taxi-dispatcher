@@ -2,9 +2,11 @@ package com.taxidispatcher.modules.driver.domain.aggregate;
 
 import com.taxidispatcher.modules.driver.domain.model.DriverId;
 import com.taxidispatcher.modules.driver.domain.model.WorkHistoryId;
+import lombok.Getter;
 
 import java.time.Instant;
 
+@Getter
 public class DriverWorkHistory {
     private final WorkHistoryId id;
     private final DriverId driverId;

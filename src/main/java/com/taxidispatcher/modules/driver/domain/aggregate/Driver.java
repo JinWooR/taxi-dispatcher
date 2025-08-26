@@ -40,4 +40,28 @@ public class Driver {
 
         this.activeStatus = activeStatus;
     }
+
+    public void updateTaxi(Taxi taxi) {
+        ensureUpdate();
+
+        this.taxi = taxi;
+    }
+
+    public void updateCurGeo(DriverGeo driverGeo) {
+        ensureUpdate();
+
+        this.curGeo = driverGeo;
+    }
+
+    public void delete() {
+        ensureUpdate();
+
+        status.ensureTransition(DriverStatus.DELETED);
+
+        if (this.activeStatus != DriverActiveStatus.LEAVE_WORK) {
+            throw new IllegalStateException("퇴근 후 기사 삭제 요청을 진행해주세요.");
+        }
+
+        this.status = DriverStatus.DELETED;
+    }
 }

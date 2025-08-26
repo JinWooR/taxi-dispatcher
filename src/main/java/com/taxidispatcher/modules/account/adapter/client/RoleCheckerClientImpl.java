@@ -52,7 +52,7 @@ public class RoleCheckerClientImpl implements RoleCheckerClient {
                 .toEntity(DriverAccountDTO.class);
 
         if (res.getStatusCode().is2xxSuccessful() && res.getBody() != null) {
-            return new ActorDTO("USER", res.getBody().driverId());
+            return new ActorDTO("DRIVER", res.getBody().driverId());
         } else {
             throw new IllegalArgumentException("DRIVER 정보 조회 실패");
         }

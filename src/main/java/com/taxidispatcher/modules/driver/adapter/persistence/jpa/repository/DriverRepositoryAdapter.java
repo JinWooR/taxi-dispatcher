@@ -8,6 +8,9 @@ import com.taxidispatcher.modules.driver.domain.model.DriverId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Repository
 @RequiredArgsConstructor
 public class DriverRepositoryAdapter implements DriverRepository {
@@ -15,11 +18,33 @@ public class DriverRepositoryAdapter implements DriverRepository {
     private final DriverMapper driverMapper;
 
     @Override
-    public DriverId save(Driver driver) {
+    public Optional<Driver> findById(DriverId driverId) {
+        var driver = driverJpaRepository.findById(driverId.id())
+                .map(driverMapper::toDomain)
+                .orElse(null);
+
+        return Optional.ofNullable(driver);
+    }
+
+    @Override
+    public Optional<Driver> findByAccountId(UUID accountId) {
+        var driver = driverJpaRepository.findByAccountId(accountId)
+                .map(driverMapper::toDomain)
+                .orElse(null);
+
+        return Optional.ofNullable(driver);
+    }
+
+    @Override
+    public Driver save(Driver driver) {
         DriverJpaEntity driverJpaEntity = driverMapper.toJpa(driver);
 
         driverJpaEntity = driverJpaRepository.save(driverJpaEntity);
 
-        return new DriverId(driverJpaEntity.getDriverId());
+        return driverMapper.toDomain(driverJpaEntity);
+    }
+
+    @Override
+    public void delete(DriverId driverId) {
     }
 }

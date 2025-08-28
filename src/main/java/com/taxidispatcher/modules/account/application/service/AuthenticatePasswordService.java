@@ -75,7 +75,7 @@ public class AuthenticatePasswordService implements AuthenticatePasswordUseCase 
             }
             case "DRIVER" -> { // 기사 권한 보유 검증
                 // TODO. DRIVER 내부 API 구현 필요
-//                actor = roleCheckerClient.callDriver(account.getAccountId());
+                actor = roleCheckerClient.callDriver(account.getAccountId());
                 authorities.add("ROLE_DRIVER");
             }
         }

@@ -11,6 +11,8 @@ import com.taxidispatcher.modules.driver.domain.aggregate.DriverWorkHistory;
 import com.taxidispatcher.modules.driver.domain.model.DriverActiveStatus;
 import com.taxidispatcher.modules.driver.domain.model.DriverGeo;
 import com.taxidispatcher.modules.driver.domain.model.WorkGeoId;
+import com.taxidispatcher.shared.core.AppException;
+import com.taxidispatcher.shared.core.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ public class UpdateDriverGeoService implements UpdateDriverGeoUseCase {
     @Override
     public Driver handle(UpdateDriverGeoCommand command) {
         Driver driver = driverRepository.findById(command.driverId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 택시 기사 정보입니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "존재하지 않는 택시 기사 정보입니다."));
 
         DriverGeo curGeo = command.curGeo();
 
@@ -39,7 +41,7 @@ public class UpdateDriverGeoService implements UpdateDriverGeoUseCase {
             
             // DriverWorkHistory 조회
             DriverWorkHistory workHistory = driverWorkHistoryRepository.findByActiveOne(command.driverId())
-                    .orElseThrow(() -> new IllegalArgumentException("현재 출근 중인 기사 정보가 아닙니다."));
+                    .orElseThrow(() -> new AppException(ErrorCode.CONFLICT, "현재 출근 중인 기사 정보가 아닙니다."));
             
             // DriverWorkGeo 저장
             WorkGeoId workGeoId = new WorkGeoId(workHistory.getId(), command.seq());

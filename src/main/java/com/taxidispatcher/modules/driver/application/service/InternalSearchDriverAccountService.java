@@ -5,6 +5,8 @@ import com.taxidispatcher.modules.driver.application.port.in.InternalSearchDrive
 import com.taxidispatcher.modules.driver.application.port.in.InternalSearchDriverAccountUseCase;
 import com.taxidispatcher.modules.driver.application.port.out.DriverRepository;
 import com.taxidispatcher.modules.driver.domain.aggregate.Driver;
+import com.taxidispatcher.shared.core.AppException;
+import com.taxidispatcher.shared.core.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,7 @@ public class InternalSearchDriverAccountService implements InternalSearchDriverA
     @Override
     public InternalDriverAccountResponse handle(InternalSearchDriverAccountCommand command) {
         Driver driver = driverRepository.findByAccountId(command.accountId())
-                .orElseThrow(() -> new IllegalArgumentException("기사 정보를 조회할 수 없습니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "기사 정보를 조회할 수 없습니다."));
         return new InternalDriverAccountResponse(driver.getId().id());
     }
 }

@@ -8,6 +8,8 @@ import com.taxidispatcher.modules.driver.domain.aggregate.Driver;
 import com.taxidispatcher.modules.driver.domain.aggregate.DriverWorkHistory;
 import com.taxidispatcher.modules.driver.domain.model.DriverActiveStatus;
 import com.taxidispatcher.modules.driver.domain.model.WorkHistoryId;
+import com.taxidispatcher.shared.core.AppException;
+import com.taxidispatcher.shared.core.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class UpdateDriverActiveStatusService implements UpdateDriverActiveStatus
     @Override
     public Driver handle(UpdateDriverActiveStatusCommand command) {
         Driver driver = driverRepository.findById(command.driverId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 택시 기사 정보입니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "존재하지 않는 택시 기사 정보입니다."));
 
         driver.updateActiveStatus(command.activeStatus());
         driver = driverRepository.save(driver);

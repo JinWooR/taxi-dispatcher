@@ -8,6 +8,8 @@ import com.taxidispatcher.modules.driver.domain.model.DriverActiveStatus;
 import com.taxidispatcher.modules.driver.domain.model.DriverGeo;
 import com.taxidispatcher.modules.driver.domain.model.DriverId;
 import com.taxidispatcher.modules.driver.domain.model.DriverStatus;
+import com.taxidispatcher.shared.core.AppException;
+import com.taxidispatcher.shared.core.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,7 @@ public class RegisterDriverService implements RegisterDriverUseCase {
     @Override
     public Driver handle(RegisterDriverCommand command) {
         if (driverRepository.findByAccountId(command.accountId()).isPresent()) {
-            throw new IllegalArgumentException("해당 어카운트는 이미 등록된 택시 기사가 존재합니다.");
+            throw new AppException(ErrorCode.CONFLICT, "해당 어카운트는 이미 등록된 택시 기사가 존재합니다.");
         }
 
         DriverId driverId = DriverId.newId();

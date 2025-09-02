@@ -8,6 +8,8 @@ import com.taxidispatcher.modules.user.application.port.out.AddressInfoSearcher;
 import com.taxidispatcher.modules.user.domain.aggregate.User;
 import com.taxidispatcher.modules.user.domain.model.Address;
 import com.taxidispatcher.modules.user.domain.model.City;
+import com.taxidispatcher.shared.core.AppException;
+import com.taxidispatcher.shared.core.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ public class UpdateUserAddressService implements UpdateUserAddressUseCase {
     @Override
     public UserResponse handle(UpdateUserAddressCommand command) {
         User user = userRepository.findById(command.userId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보입니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "존재하지 않는 회원정보입니다."));
 
         AddressInfoSearcher.AddressInfo addressInfo = addressInfoSearcher.search(command.address());
 

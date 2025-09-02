@@ -9,6 +9,8 @@ import com.taxidispatcher.modules.user.domain.model.Address;
 import com.taxidispatcher.modules.user.domain.model.City;
 import com.taxidispatcher.modules.user.domain.model.UserId;
 import com.taxidispatcher.modules.user.domain.model.UserStatus;
+import com.taxidispatcher.shared.core.AppException;
+import com.taxidispatcher.shared.core.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ public class RegisterUserService implements RegisterUserUseCase {
     @Override
     public UserId handle(RegisterUserCommand command) {
         if (userRepository.findByAccountId(command.accountId()).isPresent()) {
-            throw new IllegalArgumentException("해당 어카운트는 이미 등록된 사용자가 존재합니다.");
+            throw new AppException(ErrorCode.CONFLICT, "해당 어카운트는 이미 등록된 사용자가 존재합니다.");
         }
 
         AddressInfoSearcher.AddressInfo addressInfo = addressInfoSearcher.search(command.address());

@@ -1,6 +1,8 @@
 package com.taxidispatcher.modules.user.application.port.out;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.taxidispatcher.shared.core.AppException;
+import com.taxidispatcher.shared.core.ErrorCode;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,11 +42,11 @@ public class KakaoAddressInfoSearcherImpl implements AddressInfoSearcher {
                 .body(LocalAddressResponse.class);
 
         if (res.getDocuments().isEmpty()) {
-            throw new IllegalArgumentException("카카오 주소 정보를 확인할 수 없습니다. : " + address);
+            throw new AppException(ErrorCode.NOT_FOUND, "카카오 주소 정보를 확인할 수 없습니다. : " + address);
         }
 
         var addr = Optional.ofNullable(res.getDocuments().get(0).getAddress())
-                .orElseThrow(() -> new IllegalArgumentException("카카오 주소 상세 정보가 비었습니다: " + address));
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "카카오 주소 상세 정보가 비었습니다: " + address));
 
         return new AddressInfo(addr.getRegion1depthName(), addr.getRegion2depthName(), addr.getRegion3depthName());
     }

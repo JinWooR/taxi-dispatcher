@@ -5,6 +5,8 @@ import com.taxidispatcher.modules.account.adapter.client.dto.DriverAccountDTO;
 import com.taxidispatcher.modules.account.adapter.client.dto.UserAccountDTO;
 import com.taxidispatcher.modules.account.application.port.out.RoleCheckerClient;
 import com.taxidispatcher.modules.account.domain.model.AccountId;
+import com.taxidispatcher.shared.core.AppException;
+import com.taxidispatcher.shared.core.ErrorCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -39,7 +41,7 @@ public class RoleCheckerClientImpl implements RoleCheckerClient {
         if (res.getStatusCode().is2xxSuccessful() && res.getBody() != null) {
             return new ActorDTO("USER", res.getBody().userId());
         } else {
-            throw new IllegalArgumentException("USER 정보 조회 실패");
+            throw new AppException(ErrorCode.VALIDATION, "USER 정보 조회 실패");
         }
     }
 
@@ -54,7 +56,7 @@ public class RoleCheckerClientImpl implements RoleCheckerClient {
         if (res.getStatusCode().is2xxSuccessful() && res.getBody() != null) {
             return new ActorDTO("DRIVER", res.getBody().driverId());
         } else {
-            throw new IllegalArgumentException("DRIVER 정보 조회 실패");
+            throw new AppException(ErrorCode.VALIDATION, "DRIVER 정보 조회 실패");
         }
     }
 }

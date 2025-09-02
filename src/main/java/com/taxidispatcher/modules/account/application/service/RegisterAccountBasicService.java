@@ -7,6 +7,8 @@ import com.taxidispatcher.modules.account.application.port.out.PasswordHasher;
 import com.taxidispatcher.modules.account.domain.aggregate.Account;
 import com.taxidispatcher.modules.account.domain.aggregate.BasicCredential;
 import com.taxidispatcher.modules.account.domain.model.*;
+import com.taxidispatcher.shared.core.AppException;
+import com.taxidispatcher.shared.core.ErrorCode;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,7 @@ public class RegisterAccountBasicService implements RegisterAccountBasicUseCase 
 
         // 어카운트 중복 검사
         if (accountRepository.existsByIdentifier(loginIdentifier)) {
-            throw new IllegalArgumentException("이미 등록된 로그인 수단입니다.");
+            throw new AppException(ErrorCode.CONFLICT, "이미 등록된 로그인 수단입니다.");
         }
 
         AccountId newId = AccountId.newId(); // 어카운트 아이디 발급

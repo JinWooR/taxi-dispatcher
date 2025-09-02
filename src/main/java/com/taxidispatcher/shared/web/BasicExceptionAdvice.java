@@ -1,6 +1,7 @@
 package com.taxidispatcher.shared.web;
 
 import com.taxidispatcher.shared.core.ApiError;
+import com.taxidispatcher.shared.core.AppException;
 import com.taxidispatcher.shared.core.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,15 @@ public class BasicExceptionAdvice {
 
     protected ApiError apiError(ErrorCode code, String msg) {
         return new ApiError(code.getCode(), msg);
+    }
+
+    @ExceptionHandler(AppException.class)
+    protected ResponseEntity<ApiError> app(AppException e) {
+        ErrorCode errCode = e.getErrorCode();
+
+        return ResponseEntity
+                .status(errCode.getStatus())
+                .body(apiError(errCode, e.getMessage()));
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})

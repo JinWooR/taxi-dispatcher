@@ -28,13 +28,14 @@ public class Dispatch {
     private final AddressGeoInfo arrivalAddr;
 
     private final Instant requestDate; // 배차 요청 시간
+    private Instant canceledDate; // 배차 실패 시간
     private Instant failedDate; // 배차 실패 시간
     private Instant dispatchedDate; // 배차 승인 시간
-    private Instant startDate; // 출발 시간
-    private Instant arrivalDate; // 목적지 도착 시간
-    private Instant completeDate; // 완료 시간
+    private Instant startedDate; // 출발 시간
+    private Instant arrivedDate; // 목적지 도착 시간
+    private Instant completedDate; // 완료 시간
 
-    public Dispatch(DispatchId id, DispatchStatus status, UUID userId, UUID driverId, AddressGeoInfo startAddr, AddressGeoInfo arrivalAddr, Instant requestDate, Instant failedDate, Instant dispatchedDate, Instant startDate, Instant arrivalDate, Instant completeDate) {
+    public Dispatch(DispatchId id, DispatchStatus status, UUID userId, UUID driverId, AddressGeoInfo startAddr, AddressGeoInfo arrivalAddr, Instant requestDate, Instant canceledDate, Instant failedDate, Instant dispatchedDate, Instant startedDate, Instant arrivedDate, Instant completedDate) {
         this.id = id;
         this.status = status;
         this.userId = userId;
@@ -42,21 +43,22 @@ public class Dispatch {
         this.startAddr = startAddr;
         this.arrivalAddr = arrivalAddr;
         this.requestDate = requestDate;
+        this.canceledDate = canceledDate;
         this.failedDate = failedDate;
         this.dispatchedDate = dispatchedDate;
-        this.startDate = startDate;
-        this.arrivalDate = arrivalDate;
-        this.completeDate = completeDate;
+        this.startedDate = startedDate;
+        this.arrivedDate = arrivedDate;
+        this.completedDate = completedDate;
     }
 
     // 첫 생성시
     public static Dispatch createNew(DispatchId id, UUID userId, AddressGeoInfo startAddr, AddressGeoInfo arrivalAddr, Instant requestDate) {
-        return new Dispatch(id, DispatchStatus.REQUEST, userId, null, startAddr, arrivalAddr, requestDate, null, null, null, null, null);
+        return new Dispatch(id, DispatchStatus.REQUEST, userId, null, startAddr, arrivalAddr, requestDate, null, null, null, null, null, null);
     }
 
     // 기존 저장된 데이터를 반영시
-    public static Dispatch reconstitute(DispatchId id, DispatchStatus status, UUID userId, UUID driverId, AddressGeoInfo startAddr, AddressGeoInfo arrivalAddr, Instant requestDate, Instant failedDate, Instant dispatchedDate, Instant startDate, Instant arrivalDate, Instant completeDate) {
-        return new Dispatch(id, status, userId, driverId, startAddr, arrivalAddr, requestDate, failedDate, dispatchedDate, startDate, arrivalDate, completeDate);
+    public static Dispatch reconstitute(DispatchId id, DispatchStatus status, UUID userId, UUID driverId, AddressGeoInfo startAddr, AddressGeoInfo arrivalAddr, Instant requestDate, Instant cancelDate, Instant failedDate, Instant dispatchedDate, Instant startDate, Instant arrivalDate, Instant completeDate) {
+        return new Dispatch(id, status, userId, driverId, startAddr, arrivalAddr, requestDate, cancelDate, failedDate, dispatchedDate, startDate, arrivalDate, completeDate);
     }
 
     public void updateDriver(UUID driverId) {
@@ -76,6 +78,7 @@ public class Dispatch {
                     this.dispatchedDate = null;
                 }
             }
+            case CANCEL -> this.canceledDate = now;
             case FAILED -> this.failedDate = now;
             case DISPATCHED -> {
                 if (this.driverId == null) {
@@ -83,9 +86,9 @@ public class Dispatch {
                 }
                 this.dispatchedDate = now;
             }
-            case DRIVING -> this.startDate = now;
-            case ARRIVAL -> this.arrivalDate = now;
-            case COMPLETE -> this.completeDate = now;
+            case DRIVING -> this.startedDate = now;
+            case ARRIVAL -> this.arrivedDate = now;
+            case COMPLETE -> this.completedDate = now;
         }
 
         this.status = dispatchStatus;

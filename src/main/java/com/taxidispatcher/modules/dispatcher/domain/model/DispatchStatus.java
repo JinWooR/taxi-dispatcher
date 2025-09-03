@@ -2,6 +2,7 @@ package com.taxidispatcher.modules.dispatcher.domain.model;
 
 public enum DispatchStatus {
     REQUEST, // 배차 요청
+    CANCEL, // 배차 취소
     FAILED, // 배차 실패
     DISPATCHED, // 배차됨 (기사 도착 대기 상태)
     DRIVING, // 운행중
@@ -12,11 +13,11 @@ public enum DispatchStatus {
     // 상태 전이 가능 여부
     public boolean canTransition(DispatchStatus nextStatus) {
         return switch (this) {
-            case REQUEST -> nextStatus.equals(DISPATCHED) || nextStatus.equals(FAILED);
+            case REQUEST -> nextStatus.equals(DISPATCHED) || nextStatus.equals(FAILED) || nextStatus.equals(CANCEL);
             case DISPATCHED -> nextStatus.equals(DRIVING) || nextStatus.equals(REQUEST);
             case DRIVING -> nextStatus.equals(ARRIVAL);
             case ARRIVAL -> nextStatus.equals(COMPLETE);
-            case FAILED, COMPLETE -> false;
+            case CANCEL, FAILED, COMPLETE -> false;
         };
     }
 

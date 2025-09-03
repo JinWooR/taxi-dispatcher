@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taxidispatcher.ApiUrls;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.PasswordLoginRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.RegisterBasicRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.response.LoginResponse;
@@ -37,7 +38,7 @@ class AccountApiTest {
 
         mockMvc
                 .perform(
-                        post("/auth/register")
+                        post(ApiUrls.Account.REGISTER)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(registerBasicRequest))
                 )
@@ -49,7 +50,7 @@ class AccountApiTest {
         );
         var loginRes = mockMvc
                 .perform(
-                        post("/auth/login")
+                        post(ApiUrls.Account.LOGIN_BASIC)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(loginRequest))
                 )

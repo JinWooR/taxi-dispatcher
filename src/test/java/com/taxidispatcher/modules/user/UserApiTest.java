@@ -1,6 +1,7 @@
 package com.taxidispatcher.modules.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taxidispatcher.ApiUrls;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.PasswordLoginRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.RegisterBasicRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.response.LoginResponse;
@@ -40,7 +41,7 @@ public class UserApiTest {
 
         mockMvc
                 .perform(
-                        post("/auth/register")
+                        post(ApiUrls.Account.REGISTER)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(registerBasicRequest))
                 )
@@ -52,7 +53,7 @@ public class UserApiTest {
         );
         var loginRes = mockMvc
                 .perform(
-                        post("/auth/login")
+                        post(ApiUrls.Account.LOGIN_BASIC)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(loginRequest))
                 )
@@ -76,7 +77,7 @@ public class UserApiTest {
         );
         var loginRes = mockMvc
                 .perform(
-                        post("/auth/login/user")
+                        post(ApiUrls.Account.LOGIN_BASIC_USER)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(loginRequest))
                 )
@@ -101,7 +102,7 @@ public class UserApiTest {
         RegisterUserRequest userRequest = new RegisterUserRequest("테스터", "서울 강남구 가로수길 9", "13층");
         var registerRes = mockMvc
                 .perform(
-                        post("/users/register")
+                        post(ApiUrls.User.REGISTER)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", loginToken)
                                 .content(objectMapper.writeValueAsString(userRequest))
@@ -119,7 +120,7 @@ public class UserApiTest {
         UpdateUserNameRequest nameRequest = new UpdateUserNameRequest("테스터(이름수정)");
         var chgNameRes = mockMvc
                 .perform(
-                        patch("/users/name")
+                        patch(ApiUrls.User.UPDATE_NAME)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", loginToken)
                                 .content(objectMapper.writeValueAsString(nameRequest))
@@ -134,7 +135,7 @@ public class UserApiTest {
         UpdateUserAddressRequest addressRequest = new UpdateUserAddressRequest("서울 송파구 송파대로 558", "월드타워 57층");
         var chgAddressRes = mockMvc
                 .perform(
-                        patch("/users/address")
+                        patch(ApiUrls.User.UPDATE_ADDRESS)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", loginToken)
                                 .content(objectMapper.writeValueAsString(addressRequest))
@@ -148,7 +149,7 @@ public class UserApiTest {
         // 사용자 삭제
         var delRes = mockMvc
                 .perform(
-                        delete("/users/delete")
+                        delete(ApiUrls.User.DELETE)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", loginToken)
                 )

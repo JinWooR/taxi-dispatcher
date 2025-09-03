@@ -1,6 +1,7 @@
 package com.taxidispatcher.modules.driver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taxidispatcher.ApiUrls;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.PasswordLoginRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.RegisterBasicRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.response.LoginResponse;
@@ -47,7 +48,7 @@ public class DriverApiTest {
 
         mockMvc
                 .perform(
-                        post("/auth/register")
+                        post(ApiUrls.Account.REGISTER)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(registerBasicRequest))
                 )
@@ -59,7 +60,7 @@ public class DriverApiTest {
         );
         var loginRes = mockMvc
                 .perform(
-                        post("/auth/login")
+                        post(ApiUrls.Account.LOGIN_BASIC)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(loginRequest))
                 )
@@ -83,7 +84,7 @@ public class DriverApiTest {
         );
         var loginRes = mockMvc
                 .perform(
-                        post("/auth/login/driver")
+                        post(ApiUrls.Account.LOGIN_BASIC_DRIVER)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(loginRequest))
                 )
@@ -114,7 +115,7 @@ public class DriverApiTest {
         );
         var registerRes = mockMvc
                 .perform(
-                        post("/drivers/register")
+                        post(ApiUrls.Driver.REGISTER)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", loginToken)
                                 .content(objectMapper.writeValueAsString(driverRequest))
@@ -137,7 +138,7 @@ public class DriverApiTest {
         );
         var chgNameRes = mockMvc
                 .perform(
-                        patch("/drivers/taxi")
+                        patch(ApiUrls.Driver.UPDATE_TAXI)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", loginToken)
                                 .content(objectMapper.writeValueAsString(taxiRequest))
@@ -152,7 +153,7 @@ public class DriverApiTest {
         UpdateDriverActiveStatusRequest activeStatusWaitingReq = new UpdateDriverActiveStatusRequest(DriverActiveStatus.WAITING);
         var waitingRes = mockMvc
                 .perform(
-                        post("/drivers/active-status")
+                        post(ApiUrls.Driver.UPDATE_ACTIVE_STATUS)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", loginToken)
                                 .content(objectMapper.writeValueAsString(activeStatusWaitingReq))
@@ -170,7 +171,7 @@ public class DriverApiTest {
         );
         var geoRes = mockMvc
                 .perform(
-                        post("/drivers/geo")
+                        post(ApiUrls.Driver.UPDATE_GEO)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", loginToken)
                                 .content(objectMapper.writeValueAsString(geoRequest))
@@ -185,7 +186,7 @@ public class DriverApiTest {
         UpdateDriverActiveStatusRequest activeStatusLeaveWorkReq = new UpdateDriverActiveStatusRequest(DriverActiveStatus.LEAVE_WORK);
         var leaveWorkRes = mockMvc
                 .perform(
-                        post("/drivers/active-status")
+                        post(ApiUrls.Driver.UPDATE_ACTIVE_STATUS)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", loginToken)
                                 .content(objectMapper.writeValueAsString(activeStatusLeaveWorkReq))
@@ -199,7 +200,7 @@ public class DriverApiTest {
         // 기사 삭제
         var delRes = mockMvc
                 .perform(
-                        delete("/drivers/delete")
+                        delete(ApiUrls.Driver.DELETE)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", loginToken)
                 )

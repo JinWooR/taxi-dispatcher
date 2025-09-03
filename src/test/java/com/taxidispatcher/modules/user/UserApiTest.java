@@ -1,7 +1,7 @@
 package com.taxidispatcher.modules.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taxidispatcher.ApiUrls;
+import com.taxidispatcher.TestBaseClient;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.PasswordLoginRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.RegisterBasicRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.response.LoginResponse;
@@ -10,24 +10,11 @@ import com.taxidispatcher.modules.user.adapter.web.dto.request.RegisterUserReque
 import com.taxidispatcher.modules.user.adapter.web.dto.request.UpdateUserAddressRequest;
 import com.taxidispatcher.modules.user.adapter.web.dto.request.UpdateUserNameRequest;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 // 사용자 로그인시 외부 API 호출로 인한 웹 설정
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureMockMvc
-public class UserApiTest {
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-
+public class UserApiTest extends TestBaseClient {
     private final String loginId = "tester_001";
     private final String password = "test012!";
 
@@ -39,30 +26,20 @@ public class UserApiTest {
                 password
         );
 
-        mockMvc
-                .perform(
-                        post(ApiUrls.Account.REGISTER)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(registerBasicRequest))
-                )
+        postJson(ApiUrls.Account.REGISTER, convertString(registerBasicRequest))
                 .andExpect(status().isCreated());
 
         // 로그인
         PasswordLoginRequest loginRequest = new PasswordLoginRequest(
                 loginId, password
         );
-        var loginRes = mockMvc
-                .perform(
-                        post(ApiUrls.Account.LOGIN_BASIC)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(loginRequest))
-                )
+        var loginRes = postJson(ApiUrls.Account.LOGIN_BASIC, convertString(loginRequest))
                 .andExpect(status().isOk())
                 .andReturn();
 
         String loginToken = null;
         if (loginRes.getResponse().getStatus() >= 200 && loginRes.getResponse().getStatus() < 300) {
-            loginToken = objectMapper.readValue(loginRes.getResponse().getContentAsString(), LoginResponse.class)
+            loginToken = read(loginRes.getResponse().getContentAsString(), LoginResponse.class)
                     .token();
         }
 
@@ -75,18 +52,13 @@ public class UserApiTest {
         PasswordLoginRequest loginRequest = new PasswordLoginRequest(
                 loginId, password
         );
-        var loginRes = mockMvc
-                .perform(
-                        post(ApiUrls.Account.LOGIN_BASIC_USER)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(loginRequest))
-                )
+        var loginRes = postJson(ApiUrls.Account.LOGIN_BASIC_USER, convertString(loginRequest))
                 .andExpect(status().isOk())
                 .andReturn();
 
         String loginToken = null;
         if (loginRes.getResponse().getStatus() >= 200 && loginRes.getResponse().getStatus() < 300) {
-            loginToken = objectMapper.readValue(loginRes.getResponse().getContentAsString(), LoginResponse.class)
+            loginToken = read(loginRes.getResponse().getContentAsString(), LoginResponse.class)
                     .token();
         }
 
@@ -100,13 +72,7 @@ public class UserApiTest {
 
         // 사용자 등록
         RegisterUserRequest userRequest = new RegisterUserRequest("테스터", "서울 강남구 가로수길 9", "13층");
-        var registerRes = mockMvc
-                .perform(
-                        post(ApiUrls.User.REGISTER)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", loginToken)
-                                .content(objectMapper.writeValueAsString(userRequest))
-                )
+        var registerRes = postJson(ApiUrls.User.REGISTER, convertString(userRequest), loginToken)
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -118,13 +84,7 @@ public class UserApiTest {
 
         // 사용자 이름 변경
         UpdateUserNameRequest nameRequest = new UpdateUserNameRequest("테스터(이름수정)");
-        var chgNameRes = mockMvc
-                .perform(
-                        patch(ApiUrls.User.UPDATE_NAME)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", loginToken)
-                                .content(objectMapper.writeValueAsString(nameRequest))
-                )
+        var chgNameRes = patchJson(ApiUrls.User.UPDATE_NAME, convertString(nameRequest), loginToken)
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -133,13 +93,7 @@ public class UserApiTest {
 
         // 사용자 주소 변경
         UpdateUserAddressRequest addressRequest = new UpdateUserAddressRequest("서울 송파구 송파대로 558", "월드타워 57층");
-        var chgAddressRes = mockMvc
-                .perform(
-                        patch(ApiUrls.User.UPDATE_ADDRESS)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", loginToken)
-                                .content(objectMapper.writeValueAsString(addressRequest))
-                )
+        var chgAddressRes = patchJson(ApiUrls.User.UPDATE_ADDRESS, convertString(addressRequest), loginToken)
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -147,12 +101,7 @@ public class UserApiTest {
                 + chgAddressRes.getResponse().getContentAsString());
         
         // 사용자 삭제
-        var delRes = mockMvc
-                .perform(
-                        delete(ApiUrls.User.DELETE)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", loginToken)
-                )
+        var delRes = deleteJson(ApiUrls.User.DELETE, null, loginToken)
                 .andExpect(status().isOk())
                 .andReturn();
 

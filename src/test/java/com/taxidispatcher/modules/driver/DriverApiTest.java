@@ -1,7 +1,7 @@
 package com.taxidispatcher.modules.driver;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taxidispatcher.ApiUrls;
+import com.taxidispatcher.TestBaseClient;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.PasswordLoginRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.RegisterBasicRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.response.LoginResponse;
@@ -14,27 +14,14 @@ import com.taxidispatcher.modules.driver.domain.model.DriverActiveStatus;
 import com.taxidispatcher.modules.driver.domain.model.TaxiColor;
 import com.taxidispatcher.modules.driver.domain.model.TaxiSize;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Clock;
 import java.time.Instant;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // 기사 로그인시 외부 API 호출로 인한 웹 설정
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@AutoConfigureMockMvc
-public class DriverApiTest {
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-
+public class DriverApiTest extends TestBaseClient {
     private final String loginId = "tester_001";
     private final String password = "test012!";
 
@@ -46,30 +33,20 @@ public class DriverApiTest {
                 password
         );
 
-        mockMvc
-                .perform(
-                        post(ApiUrls.Account.REGISTER)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(registerBasicRequest))
-                )
+        postJson(ApiUrls.Account.REGISTER, convertString(registerBasicRequest))
                 .andExpect(status().isCreated());
 
         // 로그인
         PasswordLoginRequest loginRequest = new PasswordLoginRequest(
                 loginId, password
         );
-        var loginRes = mockMvc
-                .perform(
-                        post(ApiUrls.Account.LOGIN_BASIC)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(loginRequest))
-                )
+        var loginRes = postJson(ApiUrls.Account.LOGIN_BASIC, convertString(loginRequest))
                 .andExpect(status().isOk())
                 .andReturn();
 
         String loginToken = null;
         if (loginRes.getResponse().getStatus() >= 200 && loginRes.getResponse().getStatus() < 300) {
-            loginToken = objectMapper.readValue(loginRes.getResponse().getContentAsString(), LoginResponse.class)
+            loginToken = read(loginRes.getResponse().getContentAsString(), LoginResponse.class)
                     .token();
         }
 
@@ -82,18 +59,13 @@ public class DriverApiTest {
         PasswordLoginRequest loginRequest = new PasswordLoginRequest(
                 loginId, password
         );
-        var loginRes = mockMvc
-                .perform(
-                        post(ApiUrls.Account.LOGIN_BASIC_DRIVER)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(loginRequest))
-                )
+        var loginRes = postJson(ApiUrls.Account.LOGIN_BASIC_DRIVER, convertString(loginRequest))
                 .andExpect(status().isOk())
                 .andReturn();
 
         String loginToken = null;
         if (loginRes.getResponse().getStatus() >= 200 && loginRes.getResponse().getStatus() < 300) {
-            loginToken = objectMapper.readValue(loginRes.getResponse().getContentAsString(), LoginResponse.class)
+            loginToken = read(loginRes.getResponse().getContentAsString(), LoginResponse.class)
                     .token();
         }
 
@@ -113,13 +85,7 @@ public class DriverApiTest {
                 TaxiColor.BLACK,
                 null
         );
-        var registerRes = mockMvc
-                .perform(
-                        post(ApiUrls.Driver.REGISTER)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", loginToken)
-                                .content(objectMapper.writeValueAsString(driverRequest))
-                )
+        var registerRes = postJson(ApiUrls.Driver.REGISTER, convertString(driverRequest), loginToken)
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -136,13 +102,7 @@ public class DriverApiTest {
                 TaxiColor.OTHER,
                 "노란색"
         );
-        var chgNameRes = mockMvc
-                .perform(
-                        patch(ApiUrls.Driver.UPDATE_TAXI)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", loginToken)
-                                .content(objectMapper.writeValueAsString(taxiRequest))
-                )
+        var chgNameRes = patchJson(ApiUrls.Driver.UPDATE_TAXI, convertString(taxiRequest), loginToken)
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -151,13 +111,7 @@ public class DriverApiTest {
 
         // 택시 출근
         UpdateDriverActiveStatusRequest activeStatusWaitingReq = new UpdateDriverActiveStatusRequest(DriverActiveStatus.WAITING);
-        var waitingRes = mockMvc
-                .perform(
-                        post(ApiUrls.Driver.UPDATE_ACTIVE_STATUS)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", loginToken)
-                                .content(objectMapper.writeValueAsString(activeStatusWaitingReq))
-                )
+        var waitingRes = postJson(ApiUrls.Driver.UPDATE_ACTIVE_STATUS, convertString(activeStatusWaitingReq), loginToken)
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -169,13 +123,7 @@ public class DriverApiTest {
                 "37.504467", "127.098760",
                 Instant.now(Clock.systemUTC()), 1L
         );
-        var geoRes = mockMvc
-                .perform(
-                        post(ApiUrls.Driver.UPDATE_GEO)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", loginToken)
-                                .content(objectMapper.writeValueAsString(geoRequest))
-                )
+        var geoRes = postJson(ApiUrls.Driver.UPDATE_GEO, convertString(geoRequest), loginToken)
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -184,13 +132,7 @@ public class DriverApiTest {
 
         // 택시 퇴근
         UpdateDriverActiveStatusRequest activeStatusLeaveWorkReq = new UpdateDriverActiveStatusRequest(DriverActiveStatus.LEAVE_WORK);
-        var leaveWorkRes = mockMvc
-                .perform(
-                        post(ApiUrls.Driver.UPDATE_ACTIVE_STATUS)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", loginToken)
-                                .content(objectMapper.writeValueAsString(activeStatusLeaveWorkReq))
-                )
+        var leaveWorkRes = postJson(ApiUrls.Driver.UPDATE_ACTIVE_STATUS, convertString(activeStatusLeaveWorkReq), loginToken)
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -198,12 +140,7 @@ public class DriverApiTest {
                 + leaveWorkRes.getResponse().getContentAsString());
 
         // 기사 삭제
-        var delRes = mockMvc
-                .perform(
-                        delete(ApiUrls.Driver.DELETE)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", loginToken)
-                )
+        var delRes = deleteJson(ApiUrls.Driver.DELETE, null, loginToken)
                 .andExpect(status().isOk())
                 .andReturn();
 

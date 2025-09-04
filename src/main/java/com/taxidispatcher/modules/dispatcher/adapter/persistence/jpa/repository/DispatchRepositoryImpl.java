@@ -1,4 +1,4 @@
-package com.taxidispatcher.modules.dispatcher.adapter.persistence.jpa;
+package com.taxidispatcher.modules.dispatcher.adapter.persistence.jpa.repository;
 
 import com.taxidispatcher.modules.dispatcher.application.port.out.DispatchRepository;
 import com.taxidispatcher.modules.dispatcher.domain.aggregate.Dispatch;

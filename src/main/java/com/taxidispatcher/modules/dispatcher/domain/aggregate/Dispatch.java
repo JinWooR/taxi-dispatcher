@@ -1,8 +1,6 @@
 package com.taxidispatcher.modules.dispatcher.domain.aggregate;
 
-import com.taxidispatcher.modules.dispatcher.domain.model.AddressGeoInfo;
-import com.taxidispatcher.modules.dispatcher.domain.model.DispatchId;
-import com.taxidispatcher.modules.dispatcher.domain.model.DispatchStatus;
+import com.taxidispatcher.modules.dispatcher.domain.model.*;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -35,7 +33,10 @@ public class Dispatch {
     private Instant arrivedDate; // 목적지 도착 시간
     private Instant completedDate; // 완료 시간
 
-    public Dispatch(DispatchId id, DispatchStatus status, UUID userId, UUID driverId, AddressGeoInfo startAddr, AddressGeoInfo arrivalAddr, Instant requestDate, Instant canceledDate, Instant failedDate, Instant dispatchedDate, Instant startedDate, Instant arrivedDate, Instant completedDate) {
+    private DispatchAroundMeter around; // 주변 n 미터
+    private Instant aroundSearchTimeOut; // 주변 n 미터 조회 타임 아웃
+
+    public Dispatch(DispatchId id, DispatchStatus status, UUID userId, UUID driverId, AddressGeoInfo startAddr, AddressGeoInfo arrivalAddr, Instant requestDate, Instant canceledDate, Instant failedDate, Instant dispatchedDate, Instant startedDate, Instant arrivedDate, Instant completedDate, DispatchAroundMeter around, Instant aroundSearchTimeOut) {
         this.id = id;
         this.status = status;
         this.userId = userId;
@@ -49,16 +50,18 @@ public class Dispatch {
         this.startedDate = startedDate;
         this.arrivedDate = arrivedDate;
         this.completedDate = completedDate;
+        this.around = around;
+        this.aroundSearchTimeOut = aroundSearchTimeOut;
     }
 
     // 첫 생성시
     public static Dispatch createNew(DispatchId id, UUID userId, AddressGeoInfo startAddr, AddressGeoInfo arrivalAddr, Instant requestDate) {
-        return new Dispatch(id, DispatchStatus.REQUEST, userId, null, startAddr, arrivalAddr, requestDate, null, null, null, null, null, null);
+        return new Dispatch(id, DispatchStatus.REQUEST, userId, null, startAddr, arrivalAddr, requestDate, null, null, null, null, null, null, DispatchAroundMeter.PREPARING, null);
     }
 
     // 기존 저장된 데이터를 반영시
-    public static Dispatch reconstitute(DispatchId id, DispatchStatus status, UUID userId, UUID driverId, AddressGeoInfo startAddr, AddressGeoInfo arrivalAddr, Instant requestDate, Instant cancelDate, Instant failedDate, Instant dispatchedDate, Instant startDate, Instant arrivalDate, Instant completeDate) {
-        return new Dispatch(id, status, userId, driverId, startAddr, arrivalAddr, requestDate, cancelDate, failedDate, dispatchedDate, startDate, arrivalDate, completeDate);
+    public static Dispatch reconstitute(DispatchId id, DispatchStatus status, UUID userId, UUID driverId, AddressGeoInfo startAddr, AddressGeoInfo arrivalAddr, Instant requestDate, Instant cancelDate, Instant failedDate, Instant dispatchedDate, Instant startDate, Instant arrivalDate, Instant completeDate, DispatchAroundMeter around, Instant aroundSearchTimeOut) {
+        return new Dispatch(id, status, userId, driverId, startAddr, arrivalAddr, requestDate, cancelDate, failedDate, dispatchedDate, startDate, arrivalDate, completeDate, around, aroundSearchTimeOut);
     }
 
     public void updateDriver(UUID driverId) {
@@ -92,5 +95,18 @@ public class Dispatch {
         }
 
         this.status = dispatchStatus;
+    }
+
+    public DispatchAroundMeter nextAround() {
+        return this.around.nextAround();
+    }
+
+    public void nextAround(Instant timeOut) {
+        if (!this.status.equals(DispatchStatus.REQUEST)) {
+            throw new IllegalStateException("배차 요청(REQUEST) 상태에만 호출 가능 (현재 상태:" + this.status + ")");
+        }
+
+        this.around = this.around.nextAround();
+        this.aroundSearchTimeOut = timeOut;
     }
 }

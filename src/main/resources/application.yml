@@ -38,6 +38,7 @@ endPoints:
   driver-bc:
     base-url: http://localhost:8080
     internal-driver: /internal/drivers/account/{id}
+    internal-dispatch-candidate: /internal/drivers/nearby-geo
 
 security:
   jwt:

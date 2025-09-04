@@ -3,7 +3,9 @@ package com.taxidispatcher.modules.dispatcher.application.service;
 import com.taxidispatcher.modules.dispatcher.application.port.in.WriteDispatchAdapter;
 import com.taxidispatcher.modules.dispatcher.application.port.in.WriteDispatchCommand;
 import com.taxidispatcher.modules.dispatcher.application.port.out.DispatchRepository;
+import com.taxidispatcher.modules.dispatcher.application.port.out.FindDispatchCandidateDriverEventPublisher;
 import com.taxidispatcher.modules.dispatcher.domain.aggregate.Dispatch;
+import com.taxidispatcher.modules.dispatcher.domain.event.FindDispatchCandidateDriverEvent;
 import com.taxidispatcher.modules.dispatcher.domain.model.DispatchId;
 import com.taxidispatcher.shared.core.AppException;
 import com.taxidispatcher.shared.core.ErrorCode;
@@ -19,6 +21,8 @@ import java.time.Instant;
 @Transactional
 public class WriteDispatchService implements WriteDispatchAdapter {
     private final DispatchRepository dispatchRepository;
+    private final FindDispatchCandidateDriverEventPublisher eventPublisher;
+
     private final Clock clock = Clock.systemUTC();
 
     @Override
@@ -48,6 +52,9 @@ public class WriteDispatchService implements WriteDispatchAdapter {
         );
 
         dispatchRepository.save(dispatch);
+
+        // 이벤트 발행
+        eventPublisher.publish(new FindDispatchCandidateDriverEvent(dispatchId));
 
         return dispatch;
     }

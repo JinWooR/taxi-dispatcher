@@ -1,4 +1,4 @@
 package com.taxidispatcher.modules.driver.domain.model;
 
-public record DriverGeo(String lat, String lng) {
+public record DriverGeo(Double lat, Double lng) {
 }

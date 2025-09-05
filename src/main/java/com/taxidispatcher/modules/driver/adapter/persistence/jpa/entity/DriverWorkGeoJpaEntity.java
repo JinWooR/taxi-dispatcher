@@ -17,13 +17,13 @@ public class DriverWorkGeoJpaEntity {
     private DriverWorkGeoJpaId workGeoId;
 
     @Column(nullable = false, updatable = false)
-    private String lat;
+    private Double lat;
     @Column(nullable = false, updatable = false)
-    private String lng;
+    private Double lng;
     @Column(nullable = false, updatable = false)
     private Instant deviceTs;
 
-    public DriverWorkGeoJpaEntity(DriverWorkGeoJpaId workGeoId, String lat, String lng, Instant deviceTs) {
+    public DriverWorkGeoJpaEntity(DriverWorkGeoJpaId workGeoId, Double lat, Double lng, Instant deviceTs) {
         this.workGeoId = workGeoId;
         this.lat = lat;
         this.lng = lng;

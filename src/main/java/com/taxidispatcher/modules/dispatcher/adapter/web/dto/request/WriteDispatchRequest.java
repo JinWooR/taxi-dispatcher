@@ -15,5 +15,11 @@ public record WriteDispatchRequest(
         @NotBlank String address;
         @NotNull Double x;
         @NotNull Double y;
+
+        public AddressGeo(String address, Double x, Double y) {
+            this.address = address;
+            this.x = x;
+            this.y = y;
+        }
     }
 }

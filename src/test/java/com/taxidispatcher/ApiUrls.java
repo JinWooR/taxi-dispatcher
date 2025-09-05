@@ -1,16 +1,20 @@
 package com.taxidispatcher;
 
+import com.taxidispatcher.modules.dispatcher.adapter.web.dto.request.WriteDispatchRequest;
 import com.taxidispatcher.shared.security.AccountPrincipal;
 
-import com.taxidispatcher.modules.account.adapter.web.controller.AuthController;
+import com.taxidispatcher.modules.account.adapter.web.controller.*;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.*;
 
-import com.taxidispatcher.modules.driver.adapter.web.controller.DriverController;
-import com.taxidispatcher.modules.driver.adapter.web.controller.InternalDriverController;
+import com.taxidispatcher.modules.dispatcher.adapter.web.controller.*;
+
+import com.taxidispatcher.modules.driver.adapter.web.controller.*;
 import com.taxidispatcher.modules.driver.adapter.web.dto.request.*;
 
-import com.taxidispatcher.modules.user.adapter.web.controller.UserController;
+import com.taxidispatcher.modules.user.adapter.web.controller.*;
 import com.taxidispatcher.modules.user.adapter.web.dto.request.*;
+
+import java.util.UUID;
 
 public class ApiUrls {
 
@@ -26,6 +30,22 @@ public class ApiUrls {
         
         /** {@link AuthController#loginDriver(PasswordLoginRequest)} */
         public static final String LOGIN_BASIC_DRIVER = "/auth/login/driver";
+    }
+
+    public static class Dispatch {
+        public static class Driver {
+        }
+
+        public static class User {
+            /** {@link UserDispatcherController#info(AccountPrincipal, UUID)} */
+            public static final String INFO = "/users/me/dispatches/{dispatchId}";
+
+            /** {@link UserDispatcherController#writeDispatch(AccountPrincipal, WriteDispatchRequest)} */
+            public static final String WRITE = "/users/me/dispatches/write";
+
+            /** {@link UserDispatcherController#cancel(AccountPrincipal, UUID)} */
+            public static final String CANCEL = "/users/me/dispatches/{dispatchId}/cancel";
+        }
     }
 
     public static class Driver {

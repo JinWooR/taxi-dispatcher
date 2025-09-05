@@ -5,8 +5,8 @@ import java.util.UUID;
 
 public record CandidateDriverRequest(
         List<UUID> driverIds,
-        String x,
-        String y,
+        Double x,
+        Double y,
         Integer distance
 ) {
 }

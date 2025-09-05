@@ -35,10 +35,10 @@ public class DriverJpaEntity {
     private String name;
 
     @Column
-    private String lat;
+    private Double lat;
 
     @Column
-    private String lng;
+    private Double lng;
 
     @Column(nullable = false)
     private String taxiNumber;
@@ -66,7 +66,7 @@ public class DriverJpaEntity {
     @Column
     private Instant updatedAt;
 
-    public DriverJpaEntity(UUID driverId, UUID accountId, DriverStatus status, String name, String lat, String lng, String taxiNumber, TaxiSize size, TaxiColor color, String otherColor, DriverActiveStatus activeStatus) {
+    public DriverJpaEntity(UUID driverId, UUID accountId, DriverStatus status, String name, Double lat, Double lng, String taxiNumber, TaxiSize size, TaxiColor color, String otherColor, DriverActiveStatus activeStatus) {
         this.driverId = driverId;
         this.accountId = accountId;
         this.status = status;

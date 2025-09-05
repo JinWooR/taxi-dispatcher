@@ -6,6 +6,7 @@ import com.taxidispatcher.modules.account.adapter.web.controller.AuthController;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.*;
 
 import com.taxidispatcher.modules.driver.adapter.web.controller.DriverController;
+import com.taxidispatcher.modules.driver.adapter.web.controller.InternalDriverController;
 import com.taxidispatcher.modules.driver.adapter.web.dto.request.*;
 
 import com.taxidispatcher.modules.user.adapter.web.controller.UserController;
@@ -43,6 +44,13 @@ public class ApiUrls {
         /** {@link DriverController#delete(AccountPrincipal)} */
         public static final String DELETE = "/drivers/delete";
 
+        public static class Internal {
+            /** {@link InternalDriverController#accountId(String)} */
+            public static final String ACCOUNT = "/internal/drivers/account/{id}";
+
+            /** {@link InternalDriverController#nearbyGeo(InternalDriverNearbyGeoRequest)} */
+            public static final String NEARBY_GEO = "/internal/drivers/nearby-geo";
+        }
     }
 
     public static class User {

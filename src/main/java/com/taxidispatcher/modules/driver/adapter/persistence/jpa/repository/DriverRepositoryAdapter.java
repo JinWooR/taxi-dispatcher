@@ -8,6 +8,7 @@ import com.taxidispatcher.modules.driver.domain.model.DriverId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,5 +47,14 @@ public class DriverRepositoryAdapter implements DriverRepository {
 
     @Override
     public void delete(DriverId driverId) {
+    }
+
+    @Override
+    public List<DriverId> findByNearbyGeoDrivers(List<DriverId> driverIds, double maxLat, double minLat, double maxLng, double minLng) {
+        List<UUID> driverIdList;
+
+        driverIdList = driverJpaRepository.findByNearbyGeoDriversNotIn(driverIds, maxLat, minLat, maxLng, minLng);
+
+        return driverIdList.stream().map(DriverId::new).toList();
     }
 }

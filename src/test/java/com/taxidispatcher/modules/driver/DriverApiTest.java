@@ -120,7 +120,7 @@ public class DriverApiTest extends TestBaseClient {
         
         // 현재 좌표 최신화
         UpdateDriverGeoRequest geoRequest = new UpdateDriverGeoRequest(
-                "37.504467", "127.098760",
+                37.504467, 127.098760,
                 Instant.now(Clock.systemUTC()), 1L
         );
         var geoRes = postJson(ApiUrls.Driver.UPDATE_GEO, convertString(geoRequest), loginToken)

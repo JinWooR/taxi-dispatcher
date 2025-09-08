@@ -1,11 +1,9 @@
 package com.taxidispatcher.modules.dispatcher.adapter.web.controller;
 
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.request.WriteDispatchRequest;
+import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.DispatchInfoResponse;
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.WriteDispatchResponse;
-import com.taxidispatcher.modules.dispatcher.application.port.in.CancelDispatchAdapter;
-import com.taxidispatcher.modules.dispatcher.application.port.in.CancelDispatchCommand;
-import com.taxidispatcher.modules.dispatcher.application.port.in.WriteDispatchAdapter;
-import com.taxidispatcher.modules.dispatcher.application.port.in.WriteDispatchCommand;
+import com.taxidispatcher.modules.dispatcher.application.port.in.*;
 import com.taxidispatcher.modules.dispatcher.domain.model.AddressGeoInfo;
 import com.taxidispatcher.modules.dispatcher.domain.model.DispatchId;
 import com.taxidispatcher.shared.security.AccountPrincipal;
@@ -24,16 +22,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Secured("hasRole('USER')")
 public class UserDispatcherController {
+    private final ViewDispatchInfoAdapter viewDispatchInfoAdapter;
     private final WriteDispatchAdapter writeDispatchAdapter;
     private final CancelDispatchAdapter cancelDispatchAdapter;
 
     // 배차 요청서 정보 조회
     @GetMapping("{dispatchId}")
-    public ResponseEntity<String> info(
+    public ResponseEntity<DispatchInfoResponse> info(
             @AuthenticationPrincipal AccountPrincipal principal,
             @PathVariable UUID dispatchId
     ) {
-        return ResponseEntity.ok(null);
+        return ResponseEntity
+                .ok(viewDispatchInfoAdapter.handle(new ViewDispatchInfoCommand(new DispatchId(dispatchId), UUID.fromString(principal.actor().id()))));
     }
 
     // 배차 요청

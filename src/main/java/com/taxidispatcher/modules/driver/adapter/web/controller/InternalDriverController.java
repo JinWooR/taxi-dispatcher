@@ -2,10 +2,8 @@ package com.taxidispatcher.modules.driver.adapter.web.controller;
 
 import com.taxidispatcher.modules.driver.adapter.web.dto.request.InternalDriverNearbyGeoRequest;
 import com.taxidispatcher.modules.driver.adapter.web.dto.response.InternalDriverAccountResponse;
-import com.taxidispatcher.modules.driver.application.port.in.InternalSearchDriverAccountCommand;
-import com.taxidispatcher.modules.driver.application.port.in.InternalSearchDriverAccountUseCase;
-import com.taxidispatcher.modules.driver.application.port.in.InternalSearchDriverNearbyGeoAdapter;
-import com.taxidispatcher.modules.driver.application.port.in.InternalSearchDriverNearbyGeoCommand;
+import com.taxidispatcher.modules.driver.adapter.web.dto.response.InternalDriverResponse;
+import com.taxidispatcher.modules.driver.application.port.in.*;
 import com.taxidispatcher.modules.driver.domain.model.DriverId;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +18,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InternalDriverController {
     private final InternalSearchDriverAccountUseCase internalSearchDriverAccountUseCase;
+    private final InternalSearchDriverIdUseCase internalSearchDriverIdUseCase;
     private final InternalSearchDriverNearbyGeoAdapter internalSearchDriverNearbyGeoAdapter;
 
     @GetMapping("account/{id}")
     public ResponseEntity<InternalDriverAccountResponse> accountId(@PathVariable(name = "id") String accountId) {
         return ResponseEntity
                 .ok(internalSearchDriverAccountUseCase.handle(new InternalSearchDriverAccountCommand(UUID.fromString(accountId))));
+    }
+
+    @GetMapping("{driverId}")
+    public ResponseEntity<InternalDriverResponse> driverInfo(@PathVariable String driverId) {
+        return ResponseEntity
+                .ok(internalSearchDriverIdUseCase.handle(new InternalSearchDriverIdCommand(new DriverId(UUID.fromString(driverId)))));
     }
 
     @PostMapping("nearby-geo")

@@ -3,6 +3,7 @@ package com.taxidispatcher.modules.dispatcher.adapter.event.listener;
 import com.taxidispatcher.modules.dispatcher.domain.event.StopFindDispatchCandidateDriverEvent;
 import com.taxidispatcher.modules.dispatcher.domain.model.DispatchId;
 import com.taxidispatcher.modules.dispatcher.application.port.in.StopFindDispatchCandidateDriverAdapter;
+import com.taxidispatcher.shared.core.DomainEvent;
 import com.taxidispatcher.shared.core.DomainEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -12,7 +13,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
-public class StopFindDispatchCandidateDriverEventListener implements DomainEventListener<StopFindDispatchCandidateDriverEvent> {
+public class StopFindDispatchCandidateDriverEventListener implements DomainEventListener {
     private final StopFindDispatchCandidateDriverAdapter candidateDriverAdapter;
 
     /**
@@ -23,7 +24,9 @@ public class StopFindDispatchCandidateDriverEventListener implements DomainEvent
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Override
-    public void handle(StopFindDispatchCandidateDriverEvent event) {
-        candidateDriverAdapter.handle(event.dispatchId());
+    public void handle(DomainEvent event) {
+        if (event instanceof StopFindDispatchCandidateDriverEvent e) {
+            candidateDriverAdapter.handle(e.dispatchId());
+        }
     }
 }

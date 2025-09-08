@@ -59,6 +59,7 @@ public class UserDispatcherController {
             @AuthenticationPrincipal AccountPrincipal principal,
             @PathVariable UUID dispatchId
     ) {
-        return ResponseEntity.ok(null);
+        return ResponseEntity
+                .ok("배차 취소 완료");
     }
 }

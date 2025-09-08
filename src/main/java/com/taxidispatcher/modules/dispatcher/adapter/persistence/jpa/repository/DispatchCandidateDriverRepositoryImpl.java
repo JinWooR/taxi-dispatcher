@@ -26,7 +26,7 @@ public class DispatchCandidateDriverRepositoryImpl implements DispatchCandidateD
 
     @Override
     public List<DispatchCandidateDriver> findByDriversAndStatus(DispatchId dispatchId, CandidateStatus status) {
-        return dispatchCandidateDriverJpaRepository.findAllByDispatchIdAndStatus(dispatchId, status)
+        return dispatchCandidateDriverJpaRepository.findAllByDispatchIdAndStatus(dispatchId.id(), status)
                 .stream().map(dispatchCandidateDriverMapper::toDomain)
                 .toList();
     }

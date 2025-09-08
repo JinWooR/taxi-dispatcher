@@ -24,5 +24,5 @@ public interface DispatchCandidateDriverJpaRepository extends JpaRepository<Disp
         from DispatchCandidateDriverJpaEntity dcd
         where dcd.id.dispatchId = :dispatchId and dcd.status = :status
     """)
-    List<DispatchCandidateDriverJpaEntity> findAllByDispatchIdAndStatus(DispatchId dispatchId, CandidateStatus status);
+    List<DispatchCandidateDriverJpaEntity> findAllByDispatchIdAndStatus(UUID dispatchId, CandidateStatus status);
 }

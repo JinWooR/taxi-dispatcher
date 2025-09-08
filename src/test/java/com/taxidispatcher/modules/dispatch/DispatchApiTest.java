@@ -7,6 +7,7 @@ import com.taxidispatcher.modules.account.adapter.web.dto.request.RegisterBasicR
 import com.taxidispatcher.modules.account.adapter.web.dto.response.LoginResponse;
 import com.taxidispatcher.modules.account.domain.model.IdentifierKind;
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.request.WriteDispatchRequest;
+import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.WriteDispatchResponse;
 import com.taxidispatcher.modules.user.adapter.web.dto.request.RegisterUserRequest;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +29,13 @@ public class DispatchApiTest extends TestBaseClient {
 
         System.out.println("사용자) 배차 요청\n"
             + res.getResponse().getContentAsString());
+        
+        // 배차 취소
+        var dispatchId = read(res.getResponse().getContentAsString(), WriteDispatchResponse.class).dispatchId();
+
+        patchJson(ApiUrls.Dispatch.User.CANCEL.replace("{dispatchId}", dispatchId.toString()), null, bearer)
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
     }
 
     private final String loginId = "tester_001";

@@ -16,4 +16,6 @@ public interface DispatchJpaRepository extends JpaRepository<DispatchJpaEntity, 
             and d.status = :status
     """)
     Optional<DispatchJpaEntity> findOneUserIdAndStatus(UUID userId, DispatchStatus status);
+
+    Optional<DispatchJpaEntity> findOneByIdAndStatus(UUID id, DispatchStatus status);
 }

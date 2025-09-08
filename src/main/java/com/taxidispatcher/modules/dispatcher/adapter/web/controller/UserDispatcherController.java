@@ -2,9 +2,12 @@ package com.taxidispatcher.modules.dispatcher.adapter.web.controller;
 
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.request.WriteDispatchRequest;
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.WriteDispatchResponse;
+import com.taxidispatcher.modules.dispatcher.application.port.in.CancelDispatchAdapter;
+import com.taxidispatcher.modules.dispatcher.application.port.in.CancelDispatchCommand;
 import com.taxidispatcher.modules.dispatcher.application.port.in.WriteDispatchAdapter;
 import com.taxidispatcher.modules.dispatcher.application.port.in.WriteDispatchCommand;
 import com.taxidispatcher.modules.dispatcher.domain.model.AddressGeoInfo;
+import com.taxidispatcher.modules.dispatcher.domain.model.DispatchId;
 import com.taxidispatcher.shared.security.AccountPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import java.util.UUID;
 @Secured("hasRole('USER')")
 public class UserDispatcherController {
     private final WriteDispatchAdapter writeDispatchAdapter;
+    private final CancelDispatchAdapter cancelDispatchAdapter;
 
     // 배차 요청서 정보 조회
     @GetMapping("{dispatchId}")
@@ -59,6 +63,8 @@ public class UserDispatcherController {
             @AuthenticationPrincipal AccountPrincipal principal,
             @PathVariable UUID dispatchId
     ) {
+        cancelDispatchAdapter.handle(new CancelDispatchCommand(new DispatchId(dispatchId), UUID.fromString(principal.actor().id())));
+
         return ResponseEntity
                 .ok("배차 취소 완료");
     }

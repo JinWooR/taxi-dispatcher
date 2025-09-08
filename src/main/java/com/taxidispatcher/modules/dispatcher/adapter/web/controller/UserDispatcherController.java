@@ -1,6 +1,7 @@
 package com.taxidispatcher.modules.dispatcher.adapter.web.controller;
 
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.request.WriteDispatchRequest;
+import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.DispatchInfoResponse;
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.WriteDispatchResponse;
 import com.taxidispatcher.modules.dispatcher.application.port.in.CancelDispatchAdapter;
 import com.taxidispatcher.modules.dispatcher.application.port.in.CancelDispatchCommand;
@@ -29,7 +30,7 @@ public class UserDispatcherController {
 
     // 배차 요청서 정보 조회
     @GetMapping("{dispatchId}")
-    public ResponseEntity<String> info(
+    public ResponseEntity<DispatchInfoResponse> info(
             @AuthenticationPrincipal AccountPrincipal principal,
             @PathVariable UUID dispatchId
     ) {

@@ -5,14 +5,15 @@ public enum CandidateStatus {
     REJECT, // 거절
     APPROVAL, // 승인
     APPROVAL_CANCEL, // 승인 취소
+    CANCEL, // 사용자 취소
     TIME_OUT // 시간 초과
     ;
 
     public boolean canTransition(CandidateStatus nextStatus) {
         return switch (this) {
-            case REQUEST -> nextStatus.equals(APPROVAL) || nextStatus.equals(TIME_OUT);
+            case REQUEST -> nextStatus.equals(APPROVAL) || nextStatus.equals(TIME_OUT) || nextStatus.equals(CANCEL);
             case APPROVAL -> nextStatus.equals(APPROVAL_CANCEL);
-            case REJECT, APPROVAL_CANCEL, TIME_OUT -> false;
+            case REJECT, APPROVAL_CANCEL, CANCEL, TIME_OUT -> false;
         };
     }
 

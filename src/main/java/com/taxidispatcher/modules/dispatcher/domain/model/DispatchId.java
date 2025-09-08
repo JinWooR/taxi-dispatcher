@@ -6,4 +6,8 @@ public record DispatchId(UUID id) {
     public static DispatchId newId() {
         return new DispatchId(UUID.randomUUID());
     }
+
+    public DispatchId(UUID id) {
+        this.id = id;
+    }
 }

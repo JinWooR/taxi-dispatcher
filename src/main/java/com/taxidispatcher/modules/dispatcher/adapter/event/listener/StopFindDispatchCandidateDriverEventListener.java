@@ -13,6 +13,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 @RequiredArgsConstructor
 public class StopFindDispatchCandidateDriverEventListener implements DomainEventListener<StopFindDispatchCandidateDriverEvent> {
+    private final StopFindDispatchCandidateDriverAdapter candidateDriverAdapter;
 
     /**
      * @param event
@@ -23,5 +24,6 @@ public class StopFindDispatchCandidateDriverEventListener implements DomainEvent
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Override
     public void handle(StopFindDispatchCandidateDriverEvent event) {
+        candidateDriverAdapter.handle(event.dispatchId());
     }
 }

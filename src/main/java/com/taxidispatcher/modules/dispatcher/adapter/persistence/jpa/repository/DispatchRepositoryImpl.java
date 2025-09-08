@@ -32,6 +32,15 @@ public class DispatchRepositoryImpl implements DispatchRepository {
     }
 
     @Override
+    public Optional<Dispatch> findOneIdAndStatus(DispatchId dispatchId, DispatchStatus status) {
+        var dispatch = dispatchJpaRepository.findOneIdAndStatus(dispatchId.id(), status)
+                .map(dispatchMapper::toDomain)
+                .orElse(null);
+
+        return Optional.ofNullable(dispatch);
+    }
+
+    @Override
     public Dispatch save(Dispatch dispatch) {
         var entity = dispatchMapper.toJpa(dispatch);
 

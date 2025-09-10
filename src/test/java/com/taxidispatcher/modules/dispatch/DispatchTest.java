@@ -40,11 +40,9 @@ public class DispatchTest extends TestBase {
                 )
         );
 
-        if (dispatch.isPresent()) {
-            // 배차 취소
-            dispatchApiHelper.cancel(dispatch.get().dispatchId().toString());
-        } else {
-            throw new Exception("배차 요청 응답 수신 오류");
-        }
+        dispatchApiHelper.info(dispatch.get().dispatchId());
+
+        // 배차 취소
+        dispatchApiHelper.cancel(dispatch.get().dispatchId().toString());
     }
 }

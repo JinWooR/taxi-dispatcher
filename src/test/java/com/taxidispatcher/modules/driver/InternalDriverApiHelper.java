@@ -14,7 +14,7 @@ public class InternalDriverApiHelper extends TestHelper {
     }
 
     public String account(String accountId) throws Exception {
-        var res = getJson(ApiUrls.Driver.Internal.ACCOUNT.replace("{id}", accountId), null)
+        var res = getJson(ApiUrls.Driver.Internal.ACCOUNT.replace("{id}", accountId))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 

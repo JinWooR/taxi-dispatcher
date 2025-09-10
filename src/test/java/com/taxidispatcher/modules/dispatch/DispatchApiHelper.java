@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taxidispatcher.ApiUrls;
 import com.taxidispatcher.core.TestHelper;
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.request.WriteDispatchRequest;
+import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.DispatchInfoResponse;
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.WriteDispatchResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,6 +22,17 @@ public class DispatchApiHelper extends TestHelper {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public DispatchInfoResponse info(UUID dispatchId) throws Exception {
+        var res = getJson(ApiUrls.Dispatch.User.INFO.replace("{dispatchId}", dispatchId.toString()), token)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        System.out.println("사용자) 배차 정보 확인\n"
+                + res.getResponse().getContentAsString());
+
+        return read(res.getResponse().getContentAsString(), DispatchInfoResponse.class);
     }
 
     public Optional<WriteDispatchResponse> write(WriteDispatchRequest req) throws Exception {

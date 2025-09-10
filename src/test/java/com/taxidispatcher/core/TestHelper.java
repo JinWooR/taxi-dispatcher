@@ -7,6 +7,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Optional;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 
@@ -29,13 +31,23 @@ public abstract class TestHelper {
             req.header("Authorization", bearer);
         }
 
-        req.params(params);
+        if (Optional.ofNullable(params).isPresent()) {
+            req.params(params);
+        }
 
         return mockMvc.perform(req);
     }
 
+    protected ResultActions getJson(String url, String bearer) throws Exception {
+        return getJson(url, null, bearer);
+    }
+
     protected ResultActions getJson(String url, MultiValueMap<String, String> params) throws Exception {
         return getJson(url, params, null);
+    }
+
+    protected ResultActions getJson(String url) throws Exception {
+        return getJson(url, null, null);
     }
 
     protected ResultActions postJson(String url, String body, String bearer) throws Exception {

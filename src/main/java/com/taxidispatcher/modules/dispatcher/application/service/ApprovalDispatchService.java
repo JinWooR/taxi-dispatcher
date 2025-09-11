@@ -47,6 +47,7 @@ public class ApprovalDispatchService implements ApprovalDispatchAdapter {
                 }
             }
         }
+        dispatch.updateDriver(command.driverId());
         dispatch.updateStatus(DispatchStatus.DISPATCHED, Instant.now(clock));
         dispatchRepository.save(dispatch);
 

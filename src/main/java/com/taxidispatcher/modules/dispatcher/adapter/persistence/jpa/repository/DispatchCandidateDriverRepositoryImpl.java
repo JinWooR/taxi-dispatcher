@@ -1,5 +1,6 @@
 package com.taxidispatcher.modules.dispatcher.adapter.persistence.jpa.repository;
 
+import com.taxidispatcher.modules.dispatcher.adapter.persistence.jpa.entity.DispatchCandidateDriverId;
 import com.taxidispatcher.modules.dispatcher.adapter.persistence.jpa.mapper.DispatchCandidateDriverMapper;
 import com.taxidispatcher.modules.dispatcher.application.port.out.DispatchCandidateDriverRepository;
 import com.taxidispatcher.modules.dispatcher.domain.aggregate.DispatchCandidateDriver;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -51,5 +53,14 @@ public class DispatchCandidateDriverRepositoryImpl implements DispatchCandidateD
                 .toList();
 
         dispatchCandidateDriverJpaRepository.saveAll(entities);
+    }
+
+    @Override
+    public Optional<DispatchCandidateDriver> findByDriver(DispatchId dispatchId, UUID driverId) {
+        var candidateDriver = dispatchCandidateDriverJpaRepository.findById(new DispatchCandidateDriverId(dispatchId.id(), driverId))
+                .map(dispatchCandidateDriverMapper::toDomain)
+                .orElse(null);
+
+        return Optional.ofNullable(candidateDriver);
     }
 }

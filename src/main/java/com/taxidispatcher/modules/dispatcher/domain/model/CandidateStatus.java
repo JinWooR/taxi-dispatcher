@@ -11,7 +11,7 @@ public enum CandidateStatus {
 
     public boolean canTransition(CandidateStatus nextStatus) {
         return switch (this) {
-            case REQUEST -> nextStatus.equals(APPROVAL) || nextStatus.equals(TIME_OUT) || nextStatus.equals(CANCEL);
+            case REQUEST -> nextStatus.equals(APPROVAL) || nextStatus.equals(TIME_OUT) || nextStatus.equals(CANCEL) || nextStatus.equals(REJECT);
             case APPROVAL -> nextStatus.equals(APPROVAL_CANCEL);
             case REJECT, APPROVAL_CANCEL, CANCEL, TIME_OUT -> false;
         };

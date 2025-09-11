@@ -19,6 +19,7 @@ public class DispatchJpaEntity {
 
     // 배차 상태
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private DispatchStatus status;
 
     @Column(nullable = false, updatable = false)
@@ -28,11 +29,11 @@ public class DispatchJpaEntity {
     private UUID driverId;
 
     // 출발지
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private DispatchAddressInfoJpaEntity start;
 
     // 도착지
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private DispatchAddressInfoJpaEntity arrival;
 
     @Column(nullable = false, updatable = false)

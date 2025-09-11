@@ -1,5 +1,10 @@
 package com.taxidispatcher.modules.dispatcher.adapter.web.controller;
 
+import com.taxidispatcher.modules.dispatcher.application.port.in.ApprovalDispatchAdapter;
+import com.taxidispatcher.modules.dispatcher.application.port.in.ApprovalDispatchCommand;
+import com.taxidispatcher.modules.dispatcher.application.port.in.RefusalDispatchAdapter;
+import com.taxidispatcher.modules.dispatcher.application.port.in.RefusalDispatchCommand;
+import com.taxidispatcher.modules.dispatcher.domain.model.DispatchId;
 import com.taxidispatcher.shared.security.AccountPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +19,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Secured("hasRole('DRIVER')")
 public class DriverDispatcherController {
+    private final ApprovalDispatchAdapter approvalDispatchAdapter;
+    private final RefusalDispatchAdapter refusalDispatchAdapter;
 
     // 배차 요청서 정보 조회
     @GetMapping("{dispatchId}")
@@ -30,8 +37,10 @@ public class DriverDispatcherController {
             @AuthenticationPrincipal AccountPrincipal principal,
             @PathVariable UUID dispatchId
     ) {
+        approvalDispatchAdapter.handle(new ApprovalDispatchCommand(new DispatchId(dispatchId), UUID.fromString(principal.actor().id())));
+        
         return ResponseEntity
-                .ok(null);
+                .ok("배차 승인");
     }
 
     // 배차 거절
@@ -40,8 +49,10 @@ public class DriverDispatcherController {
             @AuthenticationPrincipal AccountPrincipal principal,
             @PathVariable UUID dispatchId
     ) {
+        refusalDispatchAdapter.handle(new RefusalDispatchCommand(new DispatchId(dispatchId), UUID.fromString(principal.actor().id())));
+
         return ResponseEntity
-                .ok(null);
+                .ok("배차 거절");
     }
 
     // 운행 시작

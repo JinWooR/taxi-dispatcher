@@ -8,9 +8,9 @@ import com.taxidispatcher.modules.dispatcher.application.port.out.FindDispatchCa
 import com.taxidispatcher.modules.dispatcher.domain.aggregate.Dispatch;
 import com.taxidispatcher.modules.dispatcher.domain.aggregate.DispatchCandidateDriver;
 import com.taxidispatcher.modules.dispatcher.domain.model.*;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -52,7 +52,7 @@ public class FindDispatchCandidateDriverService implements FindDispatchCandidate
 
         List<DispatchCandidateDriver> newCandidateDrivers = driverClient.callDrivers(candidateRequest)
                 .stream().map(driverId -> {
-                    var candidateDriverId = new CandidateDriverId(dispatch.getId(), driverId);
+                    var candidateDriverId = new CandidateDriverId(dispatch.getId(), UUID.fromString(driverId));
                     return DispatchCandidateDriver.createNew(candidateDriverId);
                 }).toList();
 

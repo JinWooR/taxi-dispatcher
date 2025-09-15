@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class FindDispatchCandidateDriverClientImpl implements FindDispatchCandidateDriverClient {
@@ -25,7 +24,7 @@ public class FindDispatchCandidateDriverClientImpl implements FindDispatchCandid
     }
 
     @Override
-    public List<UUID> callDrivers(CandidateDriverRequest request) {
+    public List<String> callDrivers(CandidateDriverRequest request) {
         var res = RestClient.create(DRIVER_BASE_URL)
                 .post()
                 .uri(DRIVER_DISPATCH_CANDIDATE)

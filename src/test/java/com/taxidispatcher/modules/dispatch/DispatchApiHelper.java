@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+// TODO. DispatchApiHelper -> UserDispatchApiHelper 변경 필요
 public class DispatchApiHelper extends TestHelper {
     private String token;
 

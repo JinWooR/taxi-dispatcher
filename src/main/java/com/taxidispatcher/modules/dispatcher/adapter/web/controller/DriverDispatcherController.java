@@ -44,6 +44,7 @@ public class DriverDispatcherController {
     }
 
     // 배차 거절
+    // TODO. 테스트 필요
     @PostMapping("{dispatchId}/refusal")
     public ResponseEntity<String> refusal(
             @AuthenticationPrincipal AccountPrincipal principal,

@@ -18,8 +18,8 @@ public interface DriverJpaRepository extends JpaRepository<DriverJpaEntity, UUID
         where d.driverId not in (:driverIds)
             and d.status = 'ACTIVE'
             and d.activeStatus = 'WAITING'
-            and (d.lat >= :maxLat and d.lat <= :minLat)
-            and (d.lng >= :maxLng and d.lng <= :minLng)
+            and (d.lat <= :maxLat and d.lat >= :minLat)
+            and (d.lng <= :maxLng and d.lng >= :minLng)
     """)
     List<UUID> findByNearbyGeoDriversNotIn(List<DriverId> driverIds, double maxLat, double minLat, double maxLng, double minLng);
 }

@@ -22,6 +22,7 @@ import java.time.Instant;
 public class DispatchTest extends TestBase {
     private final AccountApiHelper accountApiHelper;
     private final AccountApiHelper accountApiHelper_driver;
+    private final AccountApiHelper accountApiHelper_refusalDriver;
     private final UserApiHelper userApiHelper;
     private final DriverApiHelper driverApiHelper;
     private final DispatchApiHelper dispatchApiHelper;
@@ -31,6 +32,7 @@ public class DispatchTest extends TestBase {
         super(mockMvc, objectMapper);
         this.accountApiHelper = new AccountApiHelper(mockMvc, objectMapper, "user001", "user012!");
         this.accountApiHelper_driver = new AccountApiHelper(mockMvc, objectMapper, "driver001", "driver001!@");
+        this.accountApiHelper_refusalDriver = new AccountApiHelper(mockMvc, objectMapper, "refusal_drvier001", "refusal_drvier001!@");
         this.userApiHelper = new UserApiHelper(mockMvc, objectMapper);
         this.driverApiHelper = new DriverApiHelper(mockMvc, objectMapper);
         this.dispatchApiHelper = new DispatchApiHelper(mockMvc, objectMapper);
@@ -41,11 +43,20 @@ public class DispatchTest extends TestBase {
     void fullTest() throws Exception {
         String userToken = register_user(); // 사용자 토큰
         String driverToken = register_driver(); // 기사 토큰
+        String refusalDriverToken = register_refusalDriver(); // 배차 거부 기사 토큰
         
+        // 기사 토큰
         driverApiHelper.setToken(driverToken);
         // 기사 출근
         driverApiHelper.updateActiveStatus(new UpdateDriverActiveStatusRequest(DriverActiveStatus.WAITING));
         // 기사 좌표 정보 최신화
+        driverApiHelper.updateGeo(new UpdateDriverGeoRequest(37.5712d, 126.9784d, Instant.now(), 1L));
+
+        // 거절 기사 토큰
+        driverApiHelper.setToken(refusalDriverToken);
+        // 거절 기사 출근
+        driverApiHelper.updateActiveStatus(new UpdateDriverActiveStatusRequest(DriverActiveStatus.WAITING));
+        // 거절 기사 좌표 정보 최신화
         driverApiHelper.updateGeo(new UpdateDriverGeoRequest(37.5712d, 126.9784d, Instant.now(), 1L));
 
         dispatchApiHelper.setToken(userToken);
@@ -57,6 +68,12 @@ public class DispatchTest extends TestBase {
                 )
         );
 
+        // 배차 거절 기사 토큰 세팅 (배차 API)
+        driverDispatchApiHelper.setToken(refusalDriverToken);
+        // 배차 거절
+        driverDispatchApiHelper.refusal(dispatch.get().dispatchId());
+
+        // 배차 승인 기사 토큰 세팅
         driverDispatchApiHelper.setToken(driverToken);
         // 기사 해당 배차 요청 승인
         driverDispatchApiHelper.approval(dispatch.get().dispatchId());
@@ -88,5 +105,16 @@ public class DispatchTest extends TestBase {
         driverApiHelper.register(new RegisterDriverRequest("테스터 기사", "서울 03사1234", TaxiSize.MEDIUM, TaxiColor.BLACK, null));
 
         return  "Bearer " + accountApiHelper_driver.loginDriver();
+    }
+
+    // 어카운트 + 기사 등록
+    private String register_refusalDriver() throws Exception {
+        accountApiHelper_refusalDriver.register();
+        String token = "Bearer " + accountApiHelper_refusalDriver.login();
+
+        driverApiHelper.setToken(token);
+        driverApiHelper.register(new RegisterDriverRequest("테스터 거절 기사", "서울 13사1234", TaxiSize.LARGE, TaxiColor.SILVER, null));
+
+        return  "Bearer " + accountApiHelper_refusalDriver.loginDriver();
     }
 }

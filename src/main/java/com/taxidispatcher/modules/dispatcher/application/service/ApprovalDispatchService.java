@@ -58,6 +58,8 @@ public class ApprovalDispatchService implements ApprovalDispatchAdapter {
         candidateDriver.updateStatus(CandidateStatus.APPROVAL);
         dispatchCandidateDriverRepository.save(candidateDriver);
 
+        // (외부) 기사 상태 업데이트
+
         // 타 배차 후보 기사들 배차 만료 처리 및 알림 발송
         eventPublisher.handle(new ApprovalDispatchEvent(command.dispatchId()));
     }

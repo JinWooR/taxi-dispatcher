@@ -1,9 +1,11 @@
 package com.taxidispatcher.modules.dispatcher.application.service;
 
+import com.taxidispatcher.modules.dispatcher.adapter.client.dto.DriverActiveStatusRequest;
 import com.taxidispatcher.modules.dispatcher.application.port.in.DispatchDrivingStartAdapter;
 import com.taxidispatcher.modules.dispatcher.application.port.in.DispatchDrivingStartCommand;
 import com.taxidispatcher.modules.dispatcher.application.port.out.DispatchCandidateDriverRepository;
 import com.taxidispatcher.modules.dispatcher.application.port.out.DispatchRepository;
+import com.taxidispatcher.modules.dispatcher.application.port.out.UpdateDriverActiveStatusClient;
 import com.taxidispatcher.modules.dispatcher.domain.model.CandidateStatus;
 import com.taxidispatcher.modules.dispatcher.domain.model.DispatchStatus;
 import com.taxidispatcher.shared.core.AppException;
@@ -19,6 +21,7 @@ import java.time.Instant;
 public class DispatchDrivingStartService implements DispatchDrivingStartAdapter {
     private final DispatchRepository dispatchRepository;
     private final DispatchCandidateDriverRepository dispatchCandidateDriverRepository;
+    private final UpdateDriverActiveStatusClient updateDriverActiveStatusClient;
     private final Clock clock = Clock.systemUTC();
 
     @Override
@@ -39,6 +42,9 @@ public class DispatchDrivingStartService implements DispatchDrivingStartAdapter 
         if (candidateDriver.getStatus() != CandidateStatus.APPROVAL) {
             throw new AppException(ErrorCode.VALIDATION, "기사가 승인하지 않은 배차입니다.");
         }
+
+        // 기사 상태 업데이트
+        updateDriverActiveStatusClient.handle(DriverActiveStatusRequest.start(), dispatch.getDriverId().toString());
 
         dispatch.updateStatus(DispatchStatus.DRIVING, Instant.now(clock));
         dispatchRepository.save(dispatch);

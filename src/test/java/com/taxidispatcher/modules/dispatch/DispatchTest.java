@@ -44,19 +44,19 @@ public class DispatchTest extends TestBase {
         String userToken = register_user(); // 사용자 토큰
         String driverToken = register_driver(); // 기사 토큰
         String refusalDriverToken = register_refusalDriver(); // 배차 거부 기사 토큰
-        
-        // 기사 토큰
-        driverApiHelper.setToken(driverToken);
-        // 기사 출근
-        driverApiHelper.updateActiveStatus(new UpdateDriverActiveStatusRequest(DriverActiveStatus.WAITING));
-        // 기사 좌표 정보 최신화
-        driverApiHelper.updateGeo(new UpdateDriverGeoRequest(37.5712d, 126.9784d, Instant.now(), 1L));
 
         // 거절 기사 토큰
         driverApiHelper.setToken(refusalDriverToken);
         // 거절 기사 출근
         driverApiHelper.updateActiveStatus(new UpdateDriverActiveStatusRequest(DriverActiveStatus.WAITING));
         // 거절 기사 좌표 정보 최신화
+        driverApiHelper.updateGeo(new UpdateDriverGeoRequest(37.5712d, 126.9784d, Instant.now(), 1L));
+        
+        // 기사 토큰
+        driverApiHelper.setToken(driverToken);
+        // 기사 출근
+        driverApiHelper.updateActiveStatus(new UpdateDriverActiveStatusRequest(DriverActiveStatus.WAITING));
+        // 기사 좌표 정보 최신화
         driverApiHelper.updateGeo(new UpdateDriverGeoRequest(37.5712d, 126.9784d, Instant.now(), 1L));
 
         dispatchApiHelper.setToken(userToken);
@@ -77,12 +77,19 @@ public class DispatchTest extends TestBase {
         driverDispatchApiHelper.setToken(driverToken);
         // 기사 해당 배차 요청 승인
         driverDispatchApiHelper.approval(dispatch.get().dispatchId());
+        // 기사 상태 조회
+        driverApiHelper.me();
+        // 운행 시작
+        driverDispatchApiHelper.start(dispatch.get().dispatchId());
+        // 기사 상태 조회
+        driverApiHelper.me();
+        // 운행 종료
+        driverDispatchApiHelper.arrival(dispatch.get().dispatchId());
+        // 기사 상태 조회
+        driverApiHelper.me();
 
         // 배차 정보 조회
         dispatchApiHelper.info(dispatch.get().dispatchId());
-
-//        // 배차 취소
-//        dispatchApiHelper.cancel(dispatch.get().dispatchId().toString());
     }
 
     // 어카운트 + 사용자 등록

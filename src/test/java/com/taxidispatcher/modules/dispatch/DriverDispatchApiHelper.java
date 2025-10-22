@@ -35,4 +35,20 @@ public class DriverDispatchApiHelper extends TestHelper {
 
         return res.getResponse().getContentAsString();
     }
+
+    public String start(UUID dispatchId) throws Exception {
+        var res = postJson(ApiUrls.Dispatch.Driver.start(dispatchId.toString()), null, token)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return res.getResponse().getContentAsString();
+    }
+
+    public String arrival(UUID dispatchId) throws Exception {
+        var res = postJson(ApiUrls.Dispatch.Driver.arrival(dispatchId.toString()), null, token)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return res.getResponse().getContentAsString();
+    }
 }

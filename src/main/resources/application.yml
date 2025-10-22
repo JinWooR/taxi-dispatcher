@@ -40,6 +40,7 @@ endPoints:
     internal-driver: /internal/drivers/account/{id}
     internal-driver-id: /internal/drivers/{driverId}
     internal-dispatch-candidate: /internal/drivers/nearby-geo
+    internal-active-status: /internal/drivers/{driverId}/active-status
 
 security:
   jwt:

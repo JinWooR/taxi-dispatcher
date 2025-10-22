@@ -22,6 +22,19 @@ public class DriverApiHelper extends TestHelper {
         this.token = token;
     }
 
+    /** 내정보 조회 */
+    public String me() throws Exception {
+        var res = getJson(ApiUrls.Driver.me(), null, token)
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        System.out.println("기사 내 정보 조회\n"
+                + res);
+
+        return res;
+    }
+
     /** 기사 등록 */
     public String register(RegisterDriverRequest req) throws Exception {
         var res = postJson(ApiUrls.Driver.REGISTER, convertString(req), token)

@@ -36,8 +36,19 @@ public class ApiUrls {
         public static class Driver {
             /** {@link DriverDispatcherController#approval(AccountPrincipal, UUID)} */
             public static final String APPROVAL = "/drivers/me/dispatches/{dispatchId}/approval";
+
             /** {@link DriverDispatcherController#refusal(AccountPrincipal, UUID)} */
             public static final String REFUSAL = "/drivers/me/dispatches/{dispatchId}/refusal";
+
+            /** {@link DriverDispatcherController#start(AccountPrincipal, UUID)} */
+            public static String start(String dispatchId) {
+                return String.format("/drivers/me/dispatches/%s/start", dispatchId);
+            }
+
+            /** {@link DriverDispatcherController#arrival(AccountPrincipal, UUID)} */
+            public static String arrival(String dispatchId) {
+                return String.format("/drivers/me/dispatches/%s/arrival", dispatchId);
+            }
         }
 
         public static class User {
@@ -53,6 +64,11 @@ public class ApiUrls {
     }
 
     public static class Driver {
+        /** {@link DriverController#me(AccountPrincipal)} */
+        public static String me() {
+            return "/drivers/me";
+        }
+
         /** {@link DriverController#register(AccountPrincipal, RegisterDriverRequest)} */
         public static final String REGISTER = "/drivers/register";
 

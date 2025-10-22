@@ -24,12 +24,24 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 public class DriverController {
+    private final DriverInfoUseCase driverInfoUseCase;
     private final RegisterDriverUseCase registerDriverUseCase;
     private final UpdateDriverTaxiUseCase updateDriverTaxiUseCase;
     private final UpdateDriverGeoUseCase updateDriverGeoUseCase;
     private final UpdateDriverActiveStatusUseCase updateDriverActiveStatusUseCase;
     private final DeleteDriverUseCase deleteDriverUseCase;
 
+    // 자기 자신 정보 조회
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("me")
+    public ResponseEntity<DriverResponse> me(
+            @AuthenticationPrincipal AccountPrincipal principal
+    ) {
+        Driver driver = driverInfoUseCase.handle(DriverId.strId(principal.actor().id()));
+
+        return ResponseEntity
+                .ok(toRes(driver));
+    }
 
     // 기사 등록
     @PreAuthorize("isAuthenticated()")

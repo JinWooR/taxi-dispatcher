@@ -53,7 +53,7 @@ public class UpdateDriverGeoService implements UpdateDriverGeoUseCase {
 
         // 기사 ActiveStatus가 운행중일때. 배차에도 운행 정보 적용 필요.
         if (driver.getActiveStatus() == DriverActiveStatus.IN_OPERATION) {
-            var domainEvent = new DriverGeoDomainEvent(curGeo.lat(), curGeo.lng(), command.deviceTs(), command.seq());
+            var domainEvent = new DriverGeoDomainEvent(command.driverId().id(), curGeo.lat(), curGeo.lng(), command.deviceTs(), command.seq());
             driverGeoPublisher.publish(domainEvent);
         }
 

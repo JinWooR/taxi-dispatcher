@@ -2,6 +2,7 @@ package com.taxidispatcher.modules.driver.application.service;
 
 import com.taxidispatcher.modules.driver.application.port.in.UpdateDriverGeoCommand;
 import com.taxidispatcher.modules.driver.application.port.in.UpdateDriverGeoUseCase;
+import com.taxidispatcher.modules.driver.application.port.out.DriverGeoPublisher;
 import com.taxidispatcher.modules.driver.application.port.out.DriverRepository;
 import com.taxidispatcher.modules.driver.application.port.out.DriverWorkGeoRepository;
 import com.taxidispatcher.modules.driver.application.port.out.DriverWorkHistoryRepository;
@@ -13,6 +14,7 @@ import com.taxidispatcher.modules.driver.domain.model.DriverGeo;
 import com.taxidispatcher.modules.driver.domain.model.WorkGeoId;
 import com.taxidispatcher.shared.core.AppException;
 import com.taxidispatcher.shared.core.ErrorCode;
+import com.taxidispatcher.shared.core.domain.driver.event.DriverGeoDomainEvent;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class UpdateDriverGeoService implements UpdateDriverGeoUseCase {
     private final DriverRepository driverRepository;
     private final DriverWorkHistoryRepository driverWorkHistoryRepository;
     private final DriverWorkGeoRepository driverWorkGeoRepository;
+    private final DriverGeoPublisher driverGeoPublisher;
 
     @Override
     public Driver handle(UpdateDriverGeoCommand command) {
@@ -37,8 +40,7 @@ public class UpdateDriverGeoService implements UpdateDriverGeoUseCase {
 
         if (driver.getActiveStatus() != DriverActiveStatus.LEAVE_WORK) {
             // 출근, 휴식, 운행중인 경우.
-            // TODO. 이동 경로 로그화 저장 로직 필요
-            
+
             // DriverWorkHistory 조회
             DriverWorkHistory workHistory = driverWorkHistoryRepository.findByActiveOne(command.driverId())
                     .orElseThrow(() -> new AppException(ErrorCode.CONFLICT, "현재 출근 중인 기사 정보가 아닙니다."));
@@ -47,6 +49,12 @@ public class UpdateDriverGeoService implements UpdateDriverGeoUseCase {
             WorkGeoId workGeoId = new WorkGeoId(workHistory.getId(), command.seq());
             DriverWorkGeo workGeo = DriverWorkGeo.of(workGeoId, curGeo.lat(), curGeo.lng(), command.deviceTs());
             driverWorkGeoRepository.save(workGeo);
+        }
+
+        // 기사 ActiveStatus가 운행중일때. 배차에도 운행 정보 적용 필요.
+        if (driver.getActiveStatus() == DriverActiveStatus.IN_OPERATION) {
+            var domainEvent = new DriverGeoDomainEvent(command.driverId().id(), curGeo.lat(), curGeo.lng(), command.deviceTs(), command.seq());
+            driverGeoPublisher.publish(domainEvent);
         }
 
         return driver;

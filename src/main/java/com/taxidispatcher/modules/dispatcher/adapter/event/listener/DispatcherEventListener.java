@@ -1,13 +1,12 @@
 package com.taxidispatcher.modules.dispatcher.adapter.event.listener;
 
-import com.taxidispatcher.modules.dispatcher.application.port.in.FindDispatchCandidateDriverAdapter;
-import com.taxidispatcher.modules.dispatcher.application.port.in.StopFindDispatchCandidateDriverAdapter;
-import com.taxidispatcher.modules.dispatcher.application.port.in.TimeOutDispatchCandidateDriversAdapter;
+import com.taxidispatcher.modules.dispatcher.application.port.in.*;
 import com.taxidispatcher.modules.dispatcher.domain.event.ApprovalDispatchEvent;
 import com.taxidispatcher.modules.dispatcher.domain.event.FindDispatchCandidateDriverEvent;
 import com.taxidispatcher.modules.dispatcher.domain.event.StopFindDispatchCandidateDriverEvent;
 import com.taxidispatcher.shared.core.DomainEvent;
 import com.taxidispatcher.shared.core.DomainEventListener;
+import com.taxidispatcher.shared.core.domain.driver.event.DriverGeoDomainEvent;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,12 +24,14 @@ public class DispatcherEventListener implements DomainEventListener {
     public DispatcherEventListener(
             FindDispatchCandidateDriverAdapter findAdapter,
             StopFindDispatchCandidateDriverAdapter stopAdapter,
-            TimeOutDispatchCandidateDriversAdapter timeOutAdapter
+            TimeOutDispatchCandidateDriversAdapter timeOutAdapter,
+            DispatchDriverGeoHistoryAdapter geoHistoryAdapter
     ) {
         this.handlers = Map.of(
                 StopFindDispatchCandidateDriverEvent.class, e -> stopAdapter.handle(((StopFindDispatchCandidateDriverEvent) e).dispatchId()),
                 FindDispatchCandidateDriverEvent.class, e -> findAdapter.handle(((FindDispatchCandidateDriverEvent) e).dispatchId()),
-                ApprovalDispatchEvent.class, e -> timeOutAdapter.handle(((ApprovalDispatchEvent) e).dispatchId())
+                ApprovalDispatchEvent.class, e -> timeOutAdapter.handle(((ApprovalDispatchEvent) e).dispatchId()),
+                DriverGeoDomainEvent.class, e -> geoHistoryHandle(geoHistoryAdapter, (DriverGeoDomainEvent) e)
         );
     }
 
@@ -45,5 +46,17 @@ public class DispatcherEventListener implements DomainEventListener {
         }
 
         handler.accept(event);
+    }
+
+    private void geoHistoryHandle(DispatchDriverGeoHistoryAdapter geoHistoryAdapter, DriverGeoDomainEvent e) {
+        var command = new DispatchDriverGeoHistoryCommand(
+                e.getDriverId(),
+                e.getLat(),
+                e.getLng(),
+                e.getDeviceTs(),
+                e.getSeq()
+        );
+
+        geoHistoryAdapter.handle(command);
     }
 }

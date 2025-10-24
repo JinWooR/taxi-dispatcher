@@ -14,4 +14,6 @@ public interface DispatchRepository {
     boolean existsByUserIdDispatch(UUID uuid);
 
     Optional<Dispatch> findOneIdAndStatus(DispatchId dispatchId, DispatchStatus status);
+
+    Optional<Dispatch> findOneByDriverIdAndStatus(UUID driverId, DispatchStatus status);
 }

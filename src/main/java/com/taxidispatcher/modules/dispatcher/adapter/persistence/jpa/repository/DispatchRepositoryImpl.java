@@ -41,6 +41,15 @@ public class DispatchRepositoryImpl implements DispatchRepository {
     }
 
     @Override
+    public Optional<Dispatch> findOneByDriverIdAndStatus(UUID driverId, DispatchStatus status) {
+        var dispatch = dispatchJpaRepository.findOneByDriverIdAndStatus(driverId, status)
+                .map(dispatchMapper::toDomain)
+                .orElse(null);
+
+        return Optional.ofNullable(dispatch);
+    }
+
+    @Override
     public Dispatch save(Dispatch dispatch) {
         var entity = dispatchMapper.toJpa(dispatch);
 

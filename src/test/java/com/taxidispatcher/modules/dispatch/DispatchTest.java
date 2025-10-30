@@ -83,6 +83,10 @@ public class DispatchTest extends TestBase {
         driverDispatchApiHelper.start(dispatch.get().dispatchId());
         // 기사 상태 조회
         driverApiHelper.me();
+        // 기사 좌표 최신화
+        driverApiHelper.updateGeo(new UpdateDriverGeoRequest(37.5837d, 126.9809d, Instant.now(), 2L));
+        // 기사 좌표 최신화
+        driverApiHelper.updateGeo(new UpdateDriverGeoRequest(37.59d, 126.9899d, Instant.now(), 3L));
         // 운행 종료
         driverDispatchApiHelper.arrival(dispatch.get().dispatchId());
         // 기사 상태 조회

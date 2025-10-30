@@ -77,14 +77,4 @@ public class DriverDispatcherController {
         return ResponseEntity
                 .ok("운행 완료.");
     }
-
-    // 현재 운행 좌표 최신화 (운행정보 기록)
-    @PostMapping("{dispatchId}/geo")
-    public ResponseEntity<String> updateGeo(
-            @AuthenticationPrincipal AccountPrincipal principal,
-            @PathVariable UUID dispatchId
-    ) {
-        return ResponseEntity
-                .ok(null);
-    }
 }

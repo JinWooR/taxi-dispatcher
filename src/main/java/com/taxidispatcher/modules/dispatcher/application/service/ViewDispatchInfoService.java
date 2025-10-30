@@ -25,8 +25,16 @@ public class ViewDispatchInfoService implements ViewDispatchInfoAdapter {
         var dispatch = dispatchRepository.findById(command.dispatchId())
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "배차 정보 조회 실패"));
 
-        if (!dispatch.getUserId().equals(command.userId())) {
-            throw new AppException(ErrorCode.FORBIDDEN, "배차 정보 접근 불가");
+        if (command.userId() != null) {
+            if (!dispatch.getUserId().equals(command.userId())) {
+                throw new AppException(ErrorCode.FORBIDDEN, "배차 정보 접근 불가");
+            }
+        } else if (command.driverId() != null) {
+            if (!dispatch.getDriverId().equals(command.driverId())) {
+                throw new AppException(ErrorCode.FORBIDDEN, "배차 정보 접근 불가");
+            }
+        } else {
+            throw new AppException(ErrorCode.NOT_FOUND, "배차 정보 조회 오류.");
         }
 
         // 기사 정보 조회 (외부 API 호출)

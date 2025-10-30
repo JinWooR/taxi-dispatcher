@@ -1,5 +1,6 @@
 package com.taxidispatcher.modules.dispatcher.adapter.web.controller;
 
+import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.DispatchInfoResponse;
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.DispatchListResponse;
 import com.taxidispatcher.modules.dispatcher.application.port.in.*;
 import com.taxidispatcher.modules.dispatcher.domain.model.DispatchId;
@@ -19,6 +20,8 @@ import java.util.UUID;
 @Secured("hasRole('DRIVER')")
 public class DriverDispatcherController {
     private final ViewDispatchListUseCase viewDispatchListUseCase;
+    private final ViewDispatchInfoAdapter viewDispatchInfoAdapter;
+
     private final ApprovalDispatchAdapter approvalDispatchAdapter;
     private final RefusalDispatchAdapter refusalDispatchAdapter;
     private final DispatchDrivingStartAdapter dispatchDrivingStartAdapter;
@@ -33,11 +36,12 @@ public class DriverDispatcherController {
 
     // 배차 요청서 정보 조회
     @GetMapping("{dispatchId}")
-    public ResponseEntity<String> info(
+    public ResponseEntity<DispatchInfoResponse> info(
             @AuthenticationPrincipal AccountPrincipal principal,
             @PathVariable UUID dispatchId
     ) {
-        return ResponseEntity.ok(null);
+        return ResponseEntity
+                .ok(viewDispatchInfoAdapter.handle(ViewDispatchInfoCommand.ofDriver(new DispatchId(dispatchId), UUID.fromString(principal.actor().id()))));
     }
 
     // 배차 승인

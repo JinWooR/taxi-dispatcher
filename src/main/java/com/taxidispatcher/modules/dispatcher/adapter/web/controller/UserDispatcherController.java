@@ -43,7 +43,7 @@ public class UserDispatcherController {
             @PathVariable UUID dispatchId
     ) {
         return ResponseEntity
-                .ok(viewDispatchInfoAdapter.handle(new ViewDispatchInfoCommand(new DispatchId(dispatchId), UUID.fromString(principal.actor().id()))));
+                .ok(viewDispatchInfoAdapter.handle(ViewDispatchInfoCommand.ofUser(new DispatchId(dispatchId), UUID.fromString(principal.actor().id()))));
     }
 
     // 배차 요청

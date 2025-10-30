@@ -52,6 +52,9 @@ public class ApiUrls {
         }
 
         public static class User {
+            /** {@link UserDispatcherController#list(AccountPrincipal)} */
+            public static final String LIST = "/users/me/dispatches";
+
             /** {@link UserDispatcherController#info(AccountPrincipal, UUID)} */
             public static final String INFO = "/users/me/dispatches/{dispatchId}";
 

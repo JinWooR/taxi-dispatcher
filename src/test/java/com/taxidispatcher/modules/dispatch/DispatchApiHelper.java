@@ -25,6 +25,17 @@ public class DispatchApiHelper extends TestHelper {
         this.token = token;
     }
 
+    public String list() throws Exception {
+        var res = getJson(ApiUrls.Dispatch.User.LIST, token)
+                .andExpect(status().isOk())
+                .andReturn();
+        
+        System.out.println("사용자) 배차 목록 조회\n"
+                + res.getResponse().getContentAsString());
+        
+        return res.getResponse().getContentAsString();
+    }
+
     public DispatchInfoResponse info(UUID dispatchId) throws Exception {
         var res = getJson(ApiUrls.Dispatch.User.INFO.replace("{dispatchId}", dispatchId.toString()), token)
                 .andExpect(status().isOk())

@@ -3,6 +3,7 @@ package com.taxidispatcher.modules.dispatcher.application.service;
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.DispatchInfoResponse;
 import com.taxidispatcher.modules.dispatcher.application.port.in.ViewDispatchInfoAdapter;
 import com.taxidispatcher.modules.dispatcher.application.port.in.ViewDispatchInfoCommand;
+import com.taxidispatcher.modules.dispatcher.application.port.out.DispatchGeoHistoryRepository;
 import com.taxidispatcher.modules.dispatcher.application.port.out.DispatchRepository;
 import com.taxidispatcher.modules.dispatcher.application.port.out.SearchDriverInfoClient;
 import com.taxidispatcher.shared.core.AppException;
@@ -16,6 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ViewDispatchInfoService implements ViewDispatchInfoAdapter {
     private final DispatchRepository dispatchRepository;
+    private final DispatchGeoHistoryRepository dispatchGeoHistoryRepository;
     private final SearchDriverInfoClient searchDriverInfoClient;
 
     @Override
@@ -43,6 +45,11 @@ public class ViewDispatchInfoService implements ViewDispatchInfoAdapter {
                 .map(addr -> new DispatchInfoResponse.AddressGeo(addr.addressName(), addr.x(), addr.y()))
                 .orElse(null);
 
+        // 배차 이동 경로
+        var geoHistories = dispatchGeoHistoryRepository.findByDispatchId(command.dispatchId().id()).stream()
+                .map(geoHistory -> new DispatchInfoResponse.GeoHistory(geoHistory.getId().seq(), geoHistory.getLat(), geoHistory.getLng(), geoHistory.getDeviceTs()))
+                .toList();
+
         return new DispatchInfoResponse(
                 command.dispatchId().id(),
                 driverInfo,
@@ -52,7 +59,8 @@ public class ViewDispatchInfoService implements ViewDispatchInfoAdapter {
                 dispatch.getRequestDate(), dispatch.getCanceledDate(),
                 dispatch.getFailedDate(), dispatch.getDispatchedDate(),
                 dispatch.getStartedDate(), dispatch.getArrivedDate(),
-                dispatch.getCompletedDate()
+                dispatch.getCompletedDate(),
+                geoHistories
         );
     }
 }

@@ -5,8 +5,11 @@ import com.taxidispatcher.modules.dispatcher.domain.model.DispatchStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Table(name = "DISPATCHES")
@@ -28,13 +31,11 @@ public class DispatchJpaEntity {
     @Column
     private UUID driverId;
 
-    // 출발지
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private DispatchAddressInfoJpaEntity start;
-
-    // 도착지
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private DispatchAddressInfoJpaEntity arrival;
+    // 출발지 & 도착지
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @BatchSize(size = 5)
+    @JoinColumn(name = "dispatch_id")
+    private List<DispatchAddressInfoJpaEntity> addrInfos = new ArrayList<>();
 
     @Column(nullable = false, updatable = false)
     private Instant requestDate; // 배차 요청 시간
@@ -64,13 +65,12 @@ public class DispatchJpaEntity {
     @Column
     private Instant aroundSearchTimeOut; // 주변 n 미터 조회 타임 아웃
 
-    public DispatchJpaEntity(UUID id, DispatchStatus status, UUID userId, UUID driverId, DispatchAddressInfoJpaEntity start, DispatchAddressInfoJpaEntity arrival, Instant requestDate, Instant canceledDate, Instant failedDate, Instant dispatchedDate, Instant startedDate, Instant arrivedDate, Instant completedDate, DispatchAroundMeter around, Instant aroundSearchTimeOut) {
+    public DispatchJpaEntity(UUID id, DispatchStatus status, UUID userId, UUID driverId, List<DispatchAddressInfoJpaEntity> addrInfos, Instant requestDate, Instant canceledDate, Instant failedDate, Instant dispatchedDate, Instant startedDate, Instant arrivedDate, Instant completedDate, DispatchAroundMeter around, Instant aroundSearchTimeOut) {
         this.id = id;
         this.status = status;
         this.userId = userId;
         this.driverId = driverId;
-        this.start = start;
-        this.arrival = arrival;
+        this.addrInfos = addrInfos;
         this.requestDate = requestDate;
         this.canceledDate = canceledDate;
         this.failedDate = failedDate;
@@ -80,5 +80,15 @@ public class DispatchJpaEntity {
         this.completedDate = completedDate;
         this.around = around;
         this.aroundSearchTimeOut = aroundSearchTimeOut;
+    }
+
+    public DispatchAddressInfoJpaEntity getStart() {
+        return this.addrInfos.stream().filter(addrInfo -> addrInfo.getId().getType() == DispatchAddressInfoId.DispatchAddressTypeEnum.START)
+                .findFirst().orElse(null);
+    }
+
+    public DispatchAddressInfoJpaEntity getArrival() {
+        return this.addrInfos.stream().filter(addrInfo -> addrInfo.getId().getType() == DispatchAddressInfoId.DispatchAddressTypeEnum.ARRIVAL)
+                .findFirst().orElse(null);
     }
 }

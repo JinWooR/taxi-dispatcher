@@ -8,6 +8,7 @@ import com.taxidispatcher.modules.dispatcher.domain.model.AddressGeoInfo;
 import com.taxidispatcher.modules.dispatcher.domain.model.DispatchId;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -17,11 +18,14 @@ public class DispatchMapper {
         var dispatchId = domain.getId().id();
         var startAddr = domain.getStartAddr();
         var arrivalAddr = domain.getArrivalAddr();
+        var addrInfos = List.of(
+                toAddrJpa(dispatchId, startAddr, DispatchAddressInfoId.DispatchAddressTypeEnum.START),
+                toAddrJpa(dispatchId, arrivalAddr, DispatchAddressInfoId.DispatchAddressTypeEnum.ARRIVAL)
+        );
 
         return new DispatchJpaEntity(
                 dispatchId, domain.getStatus(), domain.getUserId(), domain.getDriverId(),
-                toAddrJpa(dispatchId, startAddr, DispatchAddressInfoId.DispatchAddressTypeEnum.START),
-                toAddrJpa(dispatchId, arrivalAddr, DispatchAddressInfoId.DispatchAddressTypeEnum.ARRIVAL),
+                addrInfos,
                 domain.getRequestDate(), domain.getCanceledDate(), domain.getFailedDate(),
                 domain.getDispatchedDate(), domain.getStartedDate(), domain.getArrivedDate(),
                 domain.getCompletedDate(), domain.getAround(), domain.getAroundSearchTimeOut()
@@ -48,6 +52,10 @@ public class DispatchMapper {
     }
 
     private AddressGeoInfo toAddrDomain(DispatchAddressInfoJpaEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
         return new AddressGeoInfo(entity.getAddressName(), entity.getLat(), entity.getLng());
     }
 }

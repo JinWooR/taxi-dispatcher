@@ -1,8 +1,11 @@
 package com.taxidispatcher.modules.user.adapter.web.controller;
 
 import com.taxidispatcher.modules.user.adapter.web.dto.response.InternalUserAccountResponse;
+import com.taxidispatcher.modules.user.adapter.web.dto.response.InternalUserResponse;
 import com.taxidispatcher.modules.user.application.port.in.InternalSearchUserAccountCommand;
 import com.taxidispatcher.modules.user.application.port.in.InternalSearchUserAccountUseCase;
+import com.taxidispatcher.modules.user.application.port.in.InternalSearchUserIdUseCase;
+import com.taxidispatcher.modules.user.domain.model.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +20,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InternalUserController {
     private final InternalSearchUserAccountUseCase internalSearchUserAccountUseCase;
+    private final InternalSearchUserIdUseCase internalSearchUserIdUseCase;
 
     @GetMapping("account/{id}")
     public ResponseEntity<InternalUserAccountResponse> accountId(@PathVariable(name = "id") String accountId) {
         return ResponseEntity
                 .ok(internalSearchUserAccountUseCase.handle(new InternalSearchUserAccountCommand(UUID.fromString(accountId))));
+    }
+
+    @GetMapping("{userId}")
+    public ResponseEntity<InternalUserResponse> userInfo(@PathVariable String userId) {
+        return ResponseEntity
+                .ok(internalSearchUserIdUseCase.handle(new InternalSearchUserIdUseCase.InternalSearchUserIdCommand(UserId.of(userId))));
     }
 }

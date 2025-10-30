@@ -35,6 +35,7 @@ endPoints:
   user-bc:
     base-url: http://localhost:8080
     internal-user: /internal/users/account/{id}
+    internal-user-id: /internal/users/{userId}
   driver-bc:
     base-url: http://localhost:8080
     internal-driver: /internal/drivers/account/{id}

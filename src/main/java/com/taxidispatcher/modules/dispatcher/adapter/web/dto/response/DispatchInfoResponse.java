@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public record DispatchInfoResponse(
         UUID dispatchId, // 배차 아이디
+        User user, // 요청서 작성자
         Driver driver, // 택시 운전자
         DispatchStatus status, // 배차 상태
         AddressGeo startAddress, // 출발지 위치 정보
@@ -40,6 +41,12 @@ public record DispatchInfoResponse(
             double lat,
             double lng,
             Instant deviceTs
+    ) {
+    }
+
+    public record User(
+            UUID userId,
+            String name
     ) {
     }
 }

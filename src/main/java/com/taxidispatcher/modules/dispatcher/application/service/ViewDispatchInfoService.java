@@ -6,6 +6,7 @@ import com.taxidispatcher.modules.dispatcher.application.port.in.ViewDispatchInf
 import com.taxidispatcher.modules.dispatcher.application.port.out.DispatchGeoHistoryRepository;
 import com.taxidispatcher.modules.dispatcher.application.port.out.DispatchRepository;
 import com.taxidispatcher.modules.dispatcher.application.port.out.SearchDriverInfoClient;
+import com.taxidispatcher.modules.dispatcher.application.port.out.SearchUserInfoClient;
 import com.taxidispatcher.shared.core.AppException;
 import com.taxidispatcher.shared.core.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class ViewDispatchInfoService implements ViewDispatchInfoAdapter {
     private final DispatchRepository dispatchRepository;
     private final DispatchGeoHistoryRepository dispatchGeoHistoryRepository;
     private final SearchDriverInfoClient searchDriverInfoClient;
+    private final SearchUserInfoClient searchUserInfoClient;
 
     @Override
     public DispatchInfoResponse handle(ViewDispatchInfoCommand command) {
@@ -36,6 +38,12 @@ public class ViewDispatchInfoService implements ViewDispatchInfoAdapter {
         } else {
             throw new AppException(ErrorCode.NOT_FOUND, "배차 정보 조회 오류.");
         }
+
+        // 요청자 정보 조회 (외부 API 호출)
+        var userInfo = Optional.ofNullable(dispatch.getUserId())
+                .map(searchUserInfoClient::handle)
+                .map(u -> new DispatchInfoResponse.User(u.userId(), u.name()))
+                .orElse(null);
 
         // 기사 정보 조회 (외부 API 호출)
         var driverInfo = Optional.ofNullable(dispatch.getDriverId())
@@ -60,6 +68,7 @@ public class ViewDispatchInfoService implements ViewDispatchInfoAdapter {
 
         return new DispatchInfoResponse(
                 command.dispatchId().id(),
+                userInfo,
                 driverInfo,
                 dispatch.getStatus(),
                 startAddress,

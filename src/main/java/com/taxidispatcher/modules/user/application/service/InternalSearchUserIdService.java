@@ -1,7 +1,7 @@
 package com.taxidispatcher.modules.user.application.service;
 
 import com.taxidispatcher.modules.user.adapter.persistence.jpa.repository.UserRepository;
-import com.taxidispatcher.modules.user.adapter.web.dto.response.InternalUserResponse;
+import com.taxidispatcher.shared.core.domain.user.dto.InternalUserResponse;
 import com.taxidispatcher.modules.user.application.port.in.InternalSearchUserIdUseCase;
 import com.taxidispatcher.shared.core.AppException;
 import com.taxidispatcher.shared.core.ErrorCode;

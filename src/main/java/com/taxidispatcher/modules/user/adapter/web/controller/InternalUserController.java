@@ -1,7 +1,7 @@
 package com.taxidispatcher.modules.user.adapter.web.controller;
 
 import com.taxidispatcher.modules.user.adapter.web.dto.response.InternalUserAccountResponse;
-import com.taxidispatcher.modules.user.adapter.web.dto.response.InternalUserResponse;
+import com.taxidispatcher.shared.core.domain.user.dto.InternalUserResponse;
 import com.taxidispatcher.modules.user.application.port.in.InternalSearchUserAccountCommand;
 import com.taxidispatcher.modules.user.application.port.in.InternalSearchUserAccountUseCase;
 import com.taxidispatcher.modules.user.application.port.in.InternalSearchUserIdUseCase;

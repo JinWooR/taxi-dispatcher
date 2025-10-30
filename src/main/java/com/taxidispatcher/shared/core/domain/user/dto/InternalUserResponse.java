@@ -1,4 +1,4 @@
-package com.taxidispatcher.modules.user.adapter.web.dto.response;
+package com.taxidispatcher.shared.core.domain.user.dto;
 
 import java.util.UUID;
 

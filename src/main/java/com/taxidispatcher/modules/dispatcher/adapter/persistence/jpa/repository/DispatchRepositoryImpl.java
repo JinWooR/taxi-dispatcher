@@ -58,6 +58,13 @@ public class DispatchRepositoryImpl implements DispatchRepository {
     }
 
     @Override
+    public List<Dispatch> findByDriverIdAndStatusIn(UUID driverId, List<DispatchStatus> statusList) {
+        return dispatchJpaRepository.findByDriverIdAndStatusIn(driverId, statusList).stream()
+                .map(dispatchMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public Dispatch save(Dispatch dispatch) {
         var entity = dispatchMapper.toJpa(dispatch);
 

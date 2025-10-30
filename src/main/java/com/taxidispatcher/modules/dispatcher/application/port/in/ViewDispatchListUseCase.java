@@ -8,7 +8,8 @@ import java.util.UUID;
 public interface ViewDispatchListUseCase {
     List<DispatchListResponse> handle(ViewDispatchListCommand command);
 
-    public record ViewDispatchListCommand(
-            UUID userId
+    record ViewDispatchListCommand(
+            UUID userId,
+            UUID driverId
     ) {}
 }

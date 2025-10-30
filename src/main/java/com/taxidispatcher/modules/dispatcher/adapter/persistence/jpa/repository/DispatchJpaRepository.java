@@ -23,4 +23,6 @@ public interface DispatchJpaRepository extends JpaRepository<DispatchJpaEntity, 
     Optional<DispatchJpaEntity> findOneByDriverIdAndStatus(UUID driverId, DispatchStatus status);
 
     List<DispatchJpaEntity> findByUserId(UUID userId);
+
+    List<DispatchJpaEntity> findByDriverIdAndStatusIn(UUID driverId, List<DispatchStatus> statusList);
 }

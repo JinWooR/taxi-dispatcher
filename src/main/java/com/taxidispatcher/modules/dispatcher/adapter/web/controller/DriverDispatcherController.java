@@ -1,5 +1,6 @@
 package com.taxidispatcher.modules.dispatcher.adapter.web.controller;
 
+import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.DispatchListResponse;
 import com.taxidispatcher.modules.dispatcher.application.port.in.*;
 import com.taxidispatcher.modules.dispatcher.domain.model.DispatchId;
 import com.taxidispatcher.shared.security.AccountPrincipal;
@@ -9,6 +10,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequestMapping("drivers/me/dispatches")
@@ -16,10 +18,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Secured("hasRole('DRIVER')")
 public class DriverDispatcherController {
+    private final ViewDispatchListUseCase viewDispatchListUseCase;
     private final ApprovalDispatchAdapter approvalDispatchAdapter;
     private final RefusalDispatchAdapter refusalDispatchAdapter;
     private final DispatchDrivingStartAdapter dispatchDrivingStartAdapter;
     private final DispatchDrivingArrivalAdapter dispatchDrivingArrivalAdapter;
+
+    // 배차 요청서 목록 (승인 / 운행 완료 항목만 노출)
+    @GetMapping
+    public ResponseEntity<List<DispatchListResponse>> list(@AuthenticationPrincipal AccountPrincipal principal) {
+        return ResponseEntity
+                .ok(viewDispatchListUseCase.handle(new ViewDispatchListUseCase.ViewDispatchListCommand(null, UUID.fromString(principal.actor().id()))));
+    }
 
     // 배차 요청서 정보 조회
     @GetMapping("{dispatchId}")

@@ -19,4 +19,6 @@ public interface DispatchRepository {
     Optional<Dispatch> findOneByDriverIdAndStatus(UUID driverId, DispatchStatus status);
 
     List<Dispatch> findByUserId(UUID uuid);
+
+    List<Dispatch> findByDriverIdAndStatusIn(UUID uuid, List<DispatchStatus> statusList);
 }

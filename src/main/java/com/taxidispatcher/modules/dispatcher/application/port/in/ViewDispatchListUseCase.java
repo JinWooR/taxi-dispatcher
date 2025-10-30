@@ -11,5 +11,13 @@ public interface ViewDispatchListUseCase {
     record ViewDispatchListCommand(
             UUID userId,
             UUID driverId
-    ) {}
+    ) {
+        public static ViewDispatchListCommand ofUser(UUID userId) {
+            return new ViewDispatchListCommand(userId, null);
+        }
+
+        public static ViewDispatchListCommand ofDriver(UUID driverId) {
+            return new ViewDispatchListCommand(null, driverId);
+        }
+    }
 }

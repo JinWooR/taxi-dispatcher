@@ -28,7 +28,7 @@ public class DriverDispatcherController {
     @GetMapping
     public ResponseEntity<List<DispatchListResponse>> list(@AuthenticationPrincipal AccountPrincipal principal) {
         return ResponseEntity
-                .ok(viewDispatchListUseCase.handle(new ViewDispatchListUseCase.ViewDispatchListCommand(null, UUID.fromString(principal.actor().id()))));
+                .ok(viewDispatchListUseCase.handle(ViewDispatchListUseCase.ViewDispatchListCommand.ofDriver(UUID.fromString(principal.actor().id()))));
     }
 
     // 배차 요청서 정보 조회

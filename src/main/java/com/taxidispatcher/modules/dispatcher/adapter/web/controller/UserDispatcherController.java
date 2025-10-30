@@ -2,6 +2,7 @@ package com.taxidispatcher.modules.dispatcher.adapter.web.controller;
 
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.request.WriteDispatchRequest;
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.DispatchInfoResponse;
+import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.DispatchListResponse;
 import com.taxidispatcher.modules.dispatcher.adapter.web.dto.response.WriteDispatchResponse;
 import com.taxidispatcher.modules.dispatcher.application.port.in.*;
 import com.taxidispatcher.modules.dispatcher.domain.model.AddressGeoInfo;
@@ -15,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RequestMapping("users/me/dispatches")
@@ -22,9 +24,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Secured("hasRole('USER')")
 public class UserDispatcherController {
+    private final ViewDispatchListUseCase viewDispatchListUseCase;
     private final ViewDispatchInfoAdapter viewDispatchInfoAdapter;
     private final WriteDispatchAdapter writeDispatchAdapter;
     private final CancelDispatchAdapter cancelDispatchAdapter;
+
+    // 배차 요청서 목록 조회
+    @GetMapping
+    public ResponseEntity<List<DispatchListResponse>> list(@AuthenticationPrincipal AccountPrincipal principal) {
+        return ResponseEntity
+                .ok(viewDispatchListUseCase.handle(new ViewDispatchListUseCase.ViewDispatchListCommand(UUID.fromString(principal.actor().id()))));
+    }
 
     // 배차 요청서 정보 조회
     @GetMapping("{dispatchId}")

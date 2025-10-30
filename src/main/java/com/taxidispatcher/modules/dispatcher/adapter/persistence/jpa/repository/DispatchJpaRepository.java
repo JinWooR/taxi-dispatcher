@@ -5,6 +5,7 @@ import com.taxidispatcher.modules.dispatcher.domain.model.DispatchStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,4 +21,6 @@ public interface DispatchJpaRepository extends JpaRepository<DispatchJpaEntity, 
     Optional<DispatchJpaEntity> findOneByIdAndStatus(UUID id, DispatchStatus status);
 
     Optional<DispatchJpaEntity> findOneByDriverIdAndStatus(UUID driverId, DispatchStatus status);
+
+    List<DispatchJpaEntity> findByUserId(UUID userId);
 }

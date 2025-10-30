@@ -4,6 +4,7 @@ import com.taxidispatcher.modules.dispatcher.domain.aggregate.Dispatch;
 import com.taxidispatcher.modules.dispatcher.domain.model.DispatchId;
 import com.taxidispatcher.modules.dispatcher.domain.model.DispatchStatus;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,4 +17,6 @@ public interface DispatchRepository {
     Optional<Dispatch> findOneIdAndStatus(DispatchId dispatchId, DispatchStatus status);
 
     Optional<Dispatch> findOneByDriverIdAndStatus(UUID driverId, DispatchStatus status);
+
+    List<Dispatch> findByUserId(UUID uuid);
 }

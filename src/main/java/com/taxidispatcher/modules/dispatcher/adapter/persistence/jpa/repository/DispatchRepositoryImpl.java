@@ -8,6 +8,7 @@ import com.taxidispatcher.modules.dispatcher.domain.model.DispatchStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,6 +48,13 @@ public class DispatchRepositoryImpl implements DispatchRepository {
                 .orElse(null);
 
         return Optional.ofNullable(dispatch);
+    }
+
+    @Override
+    public List<Dispatch> findByUserId(UUID userId) {
+        return dispatchJpaRepository.findByUserId(userId).stream()
+                .map(dispatchMapper::toDomain)
+                .toList();
     }
 
     @Override

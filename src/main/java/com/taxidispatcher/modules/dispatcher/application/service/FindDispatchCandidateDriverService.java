@@ -5,8 +5,10 @@ import com.taxidispatcher.modules.dispatcher.application.port.in.FindDispatchCan
 import com.taxidispatcher.modules.dispatcher.application.port.out.DispatchCandidateDriverRepository;
 import com.taxidispatcher.modules.dispatcher.application.port.out.DispatchRepository;
 import com.taxidispatcher.modules.dispatcher.application.port.out.FindDispatchCandidateDriverClient;
+import com.taxidispatcher.modules.dispatcher.application.port.out.FindDispatchCandidateDriverEventPublisher;
 import com.taxidispatcher.modules.dispatcher.domain.aggregate.Dispatch;
 import com.taxidispatcher.modules.dispatcher.domain.aggregate.DispatchCandidateDriver;
+import com.taxidispatcher.modules.dispatcher.domain.event.FindDispatchCandidateDriverEvent;
 import com.taxidispatcher.modules.dispatcher.domain.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class FindDispatchCandidateDriverService implements FindDispatchCandidate
     private final DispatchRepository dispatchRepository;
     private final DispatchCandidateDriverRepository dispatchCandidateDriverRepository;
     private final FindDispatchCandidateDriverClient driverClient;
+    private final FindDispatchCandidateDriverEventPublisher eventPublisher;
     private final Clock clock = Clock.systemUTC();
 
     @Override
@@ -56,14 +59,18 @@ public class FindDispatchCandidateDriverService implements FindDispatchCandidate
                     return DispatchCandidateDriver.createNew(candidateDriverId);
                 }).toList();
 
+        long nextSeconds = newCandidateDrivers.isEmpty() ? 0 : 60;
         Instant timeOut = Instant.now(clock)
-                .plusSeconds(newCandidateDrivers.isEmpty() ? 0 : 60);
+                .plusSeconds(nextSeconds);
 
         dispatchCandidateDriverRepository.saveAll(newCandidateDrivers);
 
         dispatch.nextAround(timeOut);
 
         dispatchRepository.save(dispatch);
+
+        // (딜레이 큐) 다음 조회 이벤트 등록
+        eventPublisher.publish(new FindDispatchCandidateDriverEvent(dispatch.getId(), nextSeconds));
         
         // TODO. newCandidateDrivers 신규 후보 택시 기사들에게 배차 요청서 도착 알림 발송
     }

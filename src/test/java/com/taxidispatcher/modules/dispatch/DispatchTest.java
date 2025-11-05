@@ -30,9 +30,9 @@ public class DispatchTest extends TestBase {
 
     public DispatchTest(@Autowired MockMvc mockMvc, @Autowired ObjectMapper objectMapper) {
         super(mockMvc, objectMapper);
-        this.accountApiHelper = new AccountApiHelper(mockMvc, objectMapper, "user001", "user012!");
-        this.accountApiHelper_driver = new AccountApiHelper(mockMvc, objectMapper, "driver001", "driver001!@");
-        this.accountApiHelper_refusalDriver = new AccountApiHelper(mockMvc, objectMapper, "refusal_drvier001", "refusal_drvier001!@");
+        this.accountApiHelper = new AccountApiHelper(mockMvc, objectMapper, "req_user001", "user012!");
+        this.accountApiHelper_driver = new AccountApiHelper(mockMvc, objectMapper, "approval_driver001", "driver001!@");
+        this.accountApiHelper_refusalDriver = new AccountApiHelper(mockMvc, objectMapper, "refusal_driver001", "refusal_driver001!@");
         this.userApiHelper = new UserApiHelper(mockMvc, objectMapper);
         this.driverApiHelper = new DriverApiHelper(mockMvc, objectMapper);
         this.dispatchApiHelper = new DispatchApiHelper(mockMvc, objectMapper);

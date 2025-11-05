@@ -6,6 +6,7 @@ import com.taxidispatcher.core.TestHelper;
 import com.taxidispatcher.modules.user.adapter.web.dto.request.RegisterUserRequest;
 import com.taxidispatcher.modules.user.adapter.web.dto.request.UpdateUserAddressRequest;
 import com.taxidispatcher.modules.user.adapter.web.dto.request.UpdateUserNameRequest;
+import com.taxidispatcher.modules.user.adapter.web.dto.response.UserIdResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,7 +23,7 @@ public class UserApiHelper extends TestHelper {
     }
 
     /** 사용자 등록 */
-    public String register(RegisterUserRequest req) throws Exception {
+    public UserIdResponse register(RegisterUserRequest req) throws Exception {
         // 사용자 등록
         var res = postJson(ApiUrls.User.REGISTER, convertString(req), token)
                 .andExpect(status().isCreated())
@@ -31,7 +32,7 @@ public class UserApiHelper extends TestHelper {
         System.out.println("사용자 등록 Response\n"
                 + res.getResponse().getContentAsString());
 
-        return res.getResponse().getContentAsString();
+        return read(res.getResponse().getContentAsString(), UserIdResponse.class);
     }
 
     /** 이름 변경 */

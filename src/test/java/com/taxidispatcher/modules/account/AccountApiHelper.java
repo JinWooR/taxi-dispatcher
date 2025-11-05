@@ -5,6 +5,7 @@ import com.taxidispatcher.ApiUrls;
 import com.taxidispatcher.core.TestHelper;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.PasswordLoginRequest;
 import com.taxidispatcher.modules.account.adapter.web.dto.request.RegisterBasicRequest;
+import com.taxidispatcher.modules.account.adapter.web.dto.response.AccountIdResponse;
 import com.taxidispatcher.modules.account.adapter.web.dto.response.LoginResponse;
 import com.taxidispatcher.modules.account.domain.model.IdentifierKind;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,7 +23,7 @@ public class AccountApiHelper extends TestHelper {
     }
 
     /** 어카운트 등록 */
-    public String register() throws Exception {
+    public AccountIdResponse register() throws Exception {
         // 어카운트 등록
         RegisterBasicRequest registerBasicRequest = new RegisterBasicRequest(
                 IdentifierKind.ID,
@@ -36,7 +37,7 @@ public class AccountApiHelper extends TestHelper {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        return res.getResponse().getContentAsString();
+        return read(res.getResponse().getContentAsString(), AccountIdResponse.class);
     }
 
     /** 로그인 (권한 X) */

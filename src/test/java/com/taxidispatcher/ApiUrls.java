@@ -108,5 +108,17 @@ public class ApiUrls {
         
         /** {@link UserController#delete(AccountPrincipal)} */
         public static final String DELETE = "/users/delete";
+
+        public static class Internal {
+            /** {@link InternalUserController#accountId(String)} */
+            public static String accountId(String accountId) {
+                return String.format("/internal/users/account/%s", accountId);
+            }
+
+            /** {@link InternalUserController#userInfo(String)} */
+            public static String info(String userId) {
+                return String.format("/internal/users/%s", userId);
+            }
+        }
     }
 }

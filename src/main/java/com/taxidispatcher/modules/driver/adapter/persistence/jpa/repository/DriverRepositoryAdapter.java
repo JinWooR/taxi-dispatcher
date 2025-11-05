@@ -53,7 +53,7 @@ public class DriverRepositoryAdapter implements DriverRepository {
     public List<DriverId> findByNearbyGeoDrivers(List<DriverId> driverIds, double maxLat, double minLat, double maxLng, double minLng) {
         List<UUID> driverIdList;
 
-        driverIdList = driverJpaRepository.findByNearbyGeoDriversNotIn(driverIds, maxLat, minLat, maxLng, minLng);
+        driverIdList = driverJpaRepository.findByNearbyGeoDriversNotIn(driverIds.stream().map(DriverId::id).toList(), maxLat, minLat, maxLng, minLng);
 
         return driverIdList.stream().map(DriverId::new).toList();
     }

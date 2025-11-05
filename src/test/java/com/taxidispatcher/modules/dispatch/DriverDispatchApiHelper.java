@@ -20,6 +20,28 @@ public class DriverDispatchApiHelper extends TestHelper {
         this.token = token;
     }
 
+    public String list() throws Exception {
+        var res = getJson(ApiUrls.Dispatch.Driver.LIST, token)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        log("기사) 배차 요청서 목록 조회 Response\n"
+                + res.getResponse().getContentAsString());
+
+        return res.getResponse().getContentAsString();
+    }
+
+    public String info(UUID dispatchId) throws Exception {
+        var res = getJson(ApiUrls.Dispatch.Driver.info(dispatchId.toString()), token)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        log("기사) 배차 요청서 정보 조회 Response\n"
+                + res.getResponse().getContentAsString());
+
+        return res.getResponse().getContentAsString();
+    }
+
     public String approval(UUID dispatchId) throws Exception {
         var res = postJson(ApiUrls.Dispatch.Driver.APPROVAL.replace("{dispatchId}", dispatchId.toString()), null, token)
                 .andExpect(status().isOk())

@@ -34,6 +34,14 @@ public class ApiUrls {
 
     public static class Dispatch {
         public static class Driver {
+            /** {@link DriverDispatcherController#list(AccountPrincipal)} */
+            public static final String LIST = "/drivers/me/dispatches";
+
+            /** {@link DriverDispatcherController#info(AccountPrincipal, UUID)} */
+            public static String info(String dispatchId) {
+                return String.format("/drivers/me/dispatches/%s", dispatchId);
+            }
+
             /** {@link DriverDispatcherController#approval(AccountPrincipal, UUID)} */
             public static final String APPROVAL = "/drivers/me/dispatches/{dispatchId}/approval";
 

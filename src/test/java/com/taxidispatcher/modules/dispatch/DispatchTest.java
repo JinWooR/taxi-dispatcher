@@ -96,6 +96,11 @@ public class DispatchTest extends TestBase {
         dispatchApiHelper.list();
         // 배차 정보 조회
         dispatchApiHelper.info(dispatch.get().dispatchId());
+        
+        // 기사 배차 목록 조회
+        driverDispatchApiHelper.list();
+        // 기사 배차 정보 조회
+        driverDispatchApiHelper.info(dispatch.get().dispatchId());
     }
 
     // 어카운트 + 사용자 등록

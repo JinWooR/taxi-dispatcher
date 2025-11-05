@@ -120,4 +120,8 @@ public abstract class TestHelper {
     protected <T> T read(String str, Class<T> valueType) throws Exception {
         return objectMapper.readValue(str, valueType);
     }
+
+    protected void log(String message) {
+        System.out.println(message);
+    }
 }

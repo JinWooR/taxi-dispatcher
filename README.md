@@ -27,9 +27,27 @@
 >    - 배차 요청서에 맞는 후보 기사 탐색 ```driverClient.callDrivers(candidateRequest)```
 >      - 후보 기사 탐색시 [FindDispatchCandidateDriverClientImpl](./src/main/java/com/taxidispatcher/modules/dispatcher/adapter/client/FindDispatchCandidateDriverClientImpl.java) 외부 API 호출
 >    - 후보 기사가 없거나 제한 시간내에 승인 또는 거절을 진행하지 않은 경우 딜레이 큐 방식을 통한 후보 기사 탐색 이벤트 재발행 ```eventPublisher.publish(new FindDispatchCandidateDriverEvent(dispatch.getId(), nextSeconds));```
+> 
+> ### 🖼️이벤트 다이어그램
+> <img src="./docs/img/DispatchRequestDiagram.jpg">
 
-> -> 이를 통해 외부 메시지 큐 없이 이벤트 기반 아키텍처 수립 <br>
->  추후 Kafka 또는 Rabbit MQ 마이그레이션 가능
+> ### 택시 기사 좌표 정보 및 운행 기록 관리
+> 1. [UpdateDriverActiveStatusService](./src/main/java/com/taxidispatcher/modules/driver/application/service/UpdateDriverActiveStatusService.java)
+>    - ✳️ 택시 기사는 배차 요청서를 수신하기 위해서는 자신의 상태를 출근으로 변경하여야한다. 
+> 2. [UpdateDriverGeoService](./src/main/java/com/taxidispatcher/modules/driver/application/service/UpdateDriverGeoService.java)
+>    - 일정 주기마다 좌표 정보를 최신화
+>    - 기사 상태에 따른 추가 작업
+>      - 퇴근 상태가 아닌 경우 `if (driver.getActiveStatus() != DriverActiveStatus.LEAVE_WORK) { ... }`
+>        - 출근 중 이동 경로를 저장 `driverWorkGeoRepository.save(workGeo);`
+>      - 배차로 인한 운행 중인 경우 `if (driver.getActiveStatus() == DriverActiveStatus.IN_OPERATION) { ... }`
+>        - 배차 운행 기록 저장 이벤트 발행 `driverGeoPublisher.publish(domainEvent);`
+>          - [DriverGeoPublisher](./src/main/java/com/taxidispatcher/modules/driver/adapter/event/publisher/DriverGeoPublisherImpl.java)
+>          - [DispatcherEventListener](./src/main/java/com/taxidispatcher/modules/dispatcher/adapter/event/listener/DispatcherEventListener.java) `DriverGeoDomainEvent.class, e -> geoHistoryHandle(geoHistoryAdapter, (DriverGeoDomainEvent) e)`
+> 3. [DispatchDriverGeoHistoryService](./src/main/java/com/taxidispatcher/modules/dispatcher/application/service/DispatchDriverGeoHistoryService.java)
+>    - 배차 운행 기록 저장
+> 
+> ### 🖼️이벤트 다이어그램
+> <img src="./docs/img/DriverGeoUpdateDiagram.jpg">
 
 ## 아키텍쳐 개요
 - 모노리스 + 헥사고날
